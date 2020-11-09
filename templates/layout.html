@@ -26,8 +26,6 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{{ url_for('home') }}">Home</a>
-              <a class="nav-item nav-link" href="{{ url_for('about') }}">About</a>
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
@@ -39,7 +37,7 @@
     </header>
     <main role="main" class="container">
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-md-8" role="alert">
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}
@@ -50,19 +48,6 @@
             {% endif %}
           {% endwith %}
           {% block content %}{% endblock %}
-        </div>
-        <div class="col-md-4">
-          <div class="content-section">
-            <h3>Plus d'informations</h3>
-            <p class='text-muted'>A propos
-              <ul class="list-group">
-                <li class="list-group-item list-group-item-light">Dernier Posts</li>
-                <li class="list-group-item list-group-item-light">Announcements</li>
-                <li class="list-group-item list-group-item-light">Calendrier</li>
-                <li class="list-group-item list-group-item-light">Plus</li>
-              </ul>
-            </p>
-          </div>
         </div>
       </div>
     </main>

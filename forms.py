@@ -7,7 +7,7 @@ class RegistrationForm(FlaskForm):
     prenom = StringField('Prenom',
                            validators=[DataRequired(), Length(min=2, max=20)], render_kw={"placeholder": "Mohamed"})
     nom = StringField('Nom',
-                        validators=[DataRequired(), Length(min=2, max=20)], render_kw={"placeholder": "Merini"})
+                        validators=[DataRequired(), Length(min=2, max=20)], render_kw={"placeholder": "MERINI"})
     age =  StringField('Age', 
     					validators=[DataRequired(), Length(min=1, max=3)], render_kw={"placeholder": "30"})
     lieu_de_naissance =  StringField('Lieu de naissance', 
