@@ -2,6 +2,7 @@ from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm
 from dbconnect import connection
 from pymysql import escape_string as thwart
+from datetime import datetime
 import json
 
 
@@ -21,13 +22,15 @@ def register():
 
 
     if request.method == "POST" and form.validate():
+        date_enregistrement =  datetime.now().strftime('%Y-%m-%d %H:%M:%S')
         prenom = form.prenom.data
         nom = form.nom.data
-        age = form.age.data
+        date_de_naissance = form.date_de_naissance.data.strftime('%Y-%m-%d %H:%M:%S')
         lieu_de_naissance = form.lieu_de_naissance.data
+        cin = form.cin.data
         c,conn = connection()
-        c.execute("INSERT INTO  patients (prenom, nom, age, lieu_de_naissance) VALUES (%s, %s, %s, %s)",
-                (thwart(prenom), thwart(nom), thwart(age), thwart(lieu_de_naissance)))
+        c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement) VALUES (%s, %s, %s, %s, %s, %s)",
+                (thwart(prenom), thwart(nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
 
         conn.commit()
         flash("Cas enregistre")
