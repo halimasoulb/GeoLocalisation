@@ -16,7 +16,13 @@ class Covid19Monitor():
 
     def start(self):
         app = self.app
-        @app.route("/", methods=['GET', 'POST'])
+
+        @app.route("/")
+        @app.route("/home")
+        def home():
+            return render_template('home.html')
+
+        @app.route("/register", methods=['GET', 'POST'])
         def register():
             form = RegistrationForm()
             if request.method == "POST" and form.validate():
@@ -26,16 +32,17 @@ class Covid19Monitor():
                 date_de_naissance = form.date_de_naissance.data.strftime('%Y-%m-%d %H:%M:%S')
                 lieu_de_naissance = form.lieu_de_naissance.data
                 cin = form.cin.data
-                print("\n Current Position {}\n".format(self.position))
+                position = json.dumps(self.position)
                 c,conn = connection()
-                c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position) VALUES (%s, %s, %s, %s, %s, %s, %s)",
-                        (thwart(prenom), thwart(nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement), thwart(position)))
+                c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position) VALUES (%s, %s, %s, %s, %s, %s, '"+position+"')",
+                        (thwart(prenom), thwart(nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
 
                 conn.commit()
+                redirect(url_for('home'))
                 flash("Cas enregistre")
                 c.close()
                 conn.close()
-                return ('', 204)
+                return redirect(url_for('home'))
 
             return render_template('register.html', title='Register', form=form)
 
@@ -43,10 +50,14 @@ class Covid19Monitor():
         def position():
             if request.method == 'POST':
                 self.position = request.get_json()
+                print("\n Current Position {}\n".format(self.position))
+
 
             return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
         self.app.run(host='0.0.0.0', threaded=True)
+
+
 
 if __name__ == '__main__':
     covid19Monitor = Covid19Monitor()
