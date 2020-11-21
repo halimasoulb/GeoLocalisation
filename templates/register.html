@@ -1,35 +1,29 @@
 {% extends "layout.html" %}
 {% block content %}
-<script>
-
- if("geolocation" in navigator){
-    navigator.geolocation.getCurrentPosition(function (p){
-        //var data = {"longitude" : p.coords.longitude, "latitude" : p.coords.latitude};
-        var data = p 
-        var json = JSON.stringify(data);
-
-        $.ajax({
-            type: "POST",
-            url: "/register",
-            data: json,
-            ContentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function(msg){
-                alert('In Ajax');
-                alert('data:' + data);
-            }
-        });
-
-        console.log(p);
-    }, function (e){
-        ipLookup();
-    });
- } else
- ipLookup();
- function ipLookup(){
-
- }
-</script>
+    <script>
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                currentPosition = {
+                                    'latitude': position.coords.latitude,
+                                    'longitude': position.coords.longitude
+                                  } 
+                $.ajax({
+                    url: '/position',
+                    type: 'POST',
+                    data: JSON.stringify(currentPosition),
+                    contentType: 'application/json;charset=UTF-8',
+                    cache:false,
+                    error: function(response){
+                        alert('Error sending position')
+                    }
+                });
+            });
+        } 
+        else {
+            alert("Geolocation is not supported by this browser.");
+        }
+        
+    </script>
     <div class="content-section">
         <form method="POST" action="">
             {{ form.hidden_tag() }}
