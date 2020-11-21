@@ -14,6 +14,6 @@ class RegistrationForm(FlaskForm):
     lieu_de_naissance =  StringField('Lieu de naissance', 
     					validators=[DataRequired(), Length(min=2, max=20)], render_kw={"placeholder": "Casablanca"}) 
     cin = StringField('CIN',
-                           validators=[DataRequired(), Length(min=8, max=9)], render_kw={"placeholder": "xxxxxx"})
-    
+                           validators=[DataRequired(), Length(min=8, max=9)], render_kw={"placeholder": "xxxxxxxx"})
+   
     submit = SubmitField('Enregistrer')

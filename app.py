@@ -4,6 +4,8 @@ from dbconnect import connection
 from pymysql import escape_string as thwart
 from datetime import datetime
 import json
+import requests
+import demjson
 
 
 app = Flask(__name__)
@@ -14,7 +16,6 @@ app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
 @app.route("/home")
 def home():
     return render_template('home.html')
-
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():
@@ -28,9 +29,11 @@ def register():
         date_de_naissance = form.date_de_naissance.data.strftime('%Y-%m-%d %H:%M:%S')
         lieu_de_naissance = form.lieu_de_naissance.data
         cin = form.cin.data
+        position = json.dumps(request.get_json())
+        print(position)
         c,conn = connection()
-        c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement) VALUES (%s, %s, %s, %s, %s, %s)",
-                (thwart(prenom), thwart(nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
+        c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position) VALUES (%s, %s, %s, %s, %s, %s, %s)",
+                (thwart(prenom), thwart(nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement), thwart(position)))
 
         conn.commit()
         flash("Cas enregistre")
@@ -41,5 +44,5 @@ def register():
     return render_template('register.html', title='Register', form=form)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', debug=True)
+    app.run(debug=True)
 
