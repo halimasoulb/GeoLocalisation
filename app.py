@@ -39,7 +39,7 @@ class Covid19Monitor():
 
                 conn.commit()
                 redirect(url_for('home'))
-                flash("Cas enregistre")
+                flash(f'Un nouveau cas est enregistre {form.prenom.data}','success')
                 c.close()
                 conn.close()
                 return redirect(url_for('home'))
