@@ -1,0 +1,1 @@
+from .app.py import Covid19Monitor
