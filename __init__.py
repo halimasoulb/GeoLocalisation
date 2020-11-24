@@ -1,1 +1,1 @@
-from .app.py import Covid19Monitor
+from .app import Covid19Monitor
