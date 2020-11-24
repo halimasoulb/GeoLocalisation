@@ -55,7 +55,7 @@ class Covid19Monitor():
 
             return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
-        self.app.run(host='0.0.0.0', threaded=True)
+        self.app.run(threaded=True)
 
 
 
