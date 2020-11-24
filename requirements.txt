@@ -7,7 +7,6 @@ click==7.1.2
 cryptography==2.1.4
 demjson==2.2.4
 dnspython==1.16.0
-Eel==0.12.4
 email-validator==1.1.2
 enum34==1.1.6
 Flask==1.1.2
@@ -18,7 +17,6 @@ gevent==20.9.0
 gevent-websocket==0.10.1
 greenlet==0.4.17
 gunicorn==19.10.0
-gyp==0.1
 idna==2.10
 ipaddress==1.0.17
 itsdangerous==1.1.0
