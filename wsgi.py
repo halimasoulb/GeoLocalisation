@@ -1,5 +1,4 @@
 from app import Covid19Monitor
+app = Covid19Monitor()
+print(callable(app))
 
-web_server = Covid19Monitor()
-
-app = web_server.start()

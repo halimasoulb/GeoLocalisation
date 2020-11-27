@@ -7,12 +7,23 @@ import json
 import requests
 from threading import Condition
 
-class Covid19Monitor():
+
+class Covid19Monitor(object):
+    _instance = None
+    def __new__(myClass):
+        if Covid19Monitor._instance is None:
+            Covid19Monitor._instance = object.__new__(myClass)
+        return Covid19Monitor._instance
+
     def __init__(self):
         self.cv = Condition()
         self.app = Flask(__name__)
         self.app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
         self.position = {'latitude': 0, 'longitude': 0}
+
+    def __call__(self):
+        print('callable')
+        
 
     def start(self):
         app = self.app
@@ -35,11 +46,11 @@ class Covid19Monitor():
                 position = json.dumps(self.position)
                 c,conn = connection()
                 c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position) VALUES (%s, %s, %s, %s, %s, %s, '"+position+"')",
-                        (thwart(prenom), thwart(nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
+                        (thwart(prenom), thwart (nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
 
                 conn.commit()
                 redirect(url_for('home'))
-                flash(f'Un nouveau cas est enregistre {form.prenom.data}','success')
+                #flash(f'Un nouveau cas est enregistre')
                 c.close()
                 conn.close()
                 return redirect(url_for('home'))
