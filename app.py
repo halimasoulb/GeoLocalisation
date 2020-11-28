@@ -1,31 +1,20 @@
 from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm
-from dbconnect import connection
-from pymysql import escape_string as thwart
+#from dbconnect import connection
+#from pymysql import escape_string as thwart
 from datetime import datetime
 import json
-import requests
 from threading import Condition
 
 
 class Covid19Monitor(object):
-    _instance = None
-    def __new__(myClass):
-        if Covid19Monitor._instance is None:
-            Covid19Monitor._instance = object.__new__(myClass)
-        return Covid19Monitor._instance
-
     def __init__(self):
         self.cv = Condition()
         self.app = Flask(__name__)
         self.app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
         self.position = {'latitude': 0, 'longitude': 0}
 
-    def __call__(self):
-        print('callable')
-        
-
-    def start(self):
+    def create(self, host=None, port=None, debug=None, load_dotenv=True, **options):
         app = self.app
 
         @app.route("/")
@@ -44,15 +33,15 @@ class Covid19Monitor(object):
                 lieu_de_naissance = form.lieu_de_naissance.data
                 cin = form.cin.data
                 position = json.dumps(self.position)
-                c,conn = connection()
-                c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position) VALUES (%s, %s, %s, %s, %s, %s, '"+position+"')",
-                        (thwart(prenom), thwart (nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
+                #c,conn = connection()
+                #c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position) VALUES (%s, %s, %s, %s, %s, %s, '"+position+"')",
+                #        (thwart(prenom), thwart (nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
 
-                conn.commit()
-                redirect(url_for('home'))
+                #conn.commit()
+                #redirect(url_for('home'))
                 #flash(f'Un nouveau cas est enregistre')
-                c.close()
-                conn.close()
+                #c.close()
+                #conn.close()
                 return redirect(url_for('home'))
 
             return render_template('register.html', title='Register', form=form)
@@ -66,11 +55,11 @@ class Covid19Monitor(object):
 
             return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
 
-        self.app.run(host='0.0.0.0', threaded=True)
+        return self.app
 
 
+app = Covid19Monitor().create()
 
 if __name__ == '__main__':
-    covid19Monitor = Covid19Monitor()
-    covid19Monitor.start()
+    app.run()
 
