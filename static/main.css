@@ -1,7 +1,11 @@
 body {
-  background: #fafafa;
+
   color: #333333;
   margin-top: 5rem;
+  background: url("images/maroc-drapeau.png"); 
+  background-size: cover;
+
+
 }
 
 #mapid { height: 180px; }
@@ -27,7 +31,13 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 500;
 }
 
-
+.register-section {
+  background-color: white;
+  font-size: 2rem;!important;
+  padding: 20px;
+  box-shadow: 15px 15px 15px rgba(0,0,0,0.7);
+  border-radius: 15px;
+}
 
 .nav-item {
   font-size: 2.5rem;!important;
