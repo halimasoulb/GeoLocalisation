@@ -1,16 +1,21 @@
+from datetime import datetime
+import json
+from threading import Condition
+
 from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm
 #from dbconnect import connection
 #from pymysql import escape_string as thwart
-from datetime import datetime
-import json
-from threading import Condition
+
+from flask_googlemaps import GoogleMaps, Map, icons
 
 
 class Covid19Monitor(object):
     def __init__(self):
         self.cv = Condition()
         self.app = Flask(__name__)
+        self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
+        GoogleMaps(self.app)
         self.app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
         self.position = {'latitude': 0, 'longitude': 0}
 
@@ -54,6 +59,22 @@ class Covid19Monitor(object):
 
 
             return json.dumps({'success':True}), 200, {'ContentType':'application/json'} 
+
+        @app.route("/monitor", methods=['GET', 'POST'])
+        def monitor():
+            gmap = Map(
+                identifier="gmap",
+                varname="gmap",
+                lat=31.630000,
+                lng=-8.008889,
+                markers=
+                    {
+                        icons.dots.red: [(31.630000, -8.008889)]
+                    },
+                style="height:720px;width:1280px;margin:auto;",
+            )
+            return render_template('map.html', gmap=gmap)
+
 
         return self.app
 
