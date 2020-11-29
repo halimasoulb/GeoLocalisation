@@ -4,10 +4,11 @@ from threading import Condition
 
 from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm
-#from dbconnect import connection
 #from pymysql import escape_string as thwart
+#from dbconnect import register
 
 from flask_googlemaps import GoogleMaps, Map, icons
+#from flask_sqlalchemy import SQLAlchemy
 
 
 class Covid19Monitor(object):
@@ -17,7 +18,7 @@ class Covid19Monitor(object):
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
         self.app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b'
-        self.db.init_app(app)
+        #self.db.init_app(app)
         self.app.config['DEBUG'] = True
         self.app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
         self.position = {'latitude': 0, 'longitude': 0}
@@ -31,9 +32,10 @@ class Covid19Monitor(object):
                 'longitude': 1.9167
             }
         ]
+       
 
 
-    def create(self, host=None, port=None, debug=None, load_dotenv=True, **options):
+    def create(self):
         app = self.app
 
         @app.route("/")
@@ -52,13 +54,17 @@ class Covid19Monitor(object):
                 lieu_de_naissance = form.lieu_de_naissance.data
                 cin = form.cin.data
                 position = json.dumps(self.position)
+                #db.create_all()
+                #cases = register(prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position)
+                #db.session.add(cases)
+                #db.session.commit()
                 #c,conn = connection()
                 #c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position) VALUES (%s, %s, %s, %s, %s, %s, '"+position+"')",
                 #        (thwart(prenom), thwart (nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
 
                 #conn.commit()
-                #redirect(url_for('home'))
-                #flash(f'Un nouveau cas est enregistre')
+                redirect(url_for('home'))
+                flash(f'Un nouveau cas est enregistre')
                 #c.close()
                 #conn.close()
                 return redirect(url_for('home'))
