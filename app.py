@@ -21,6 +21,17 @@ class Covid19Monitor(object):
         self.app.config['DEBUG'] = True
         self.app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
         self.position = {'latitude': 0, 'longitude': 0}
+        self.locations = [
+            {
+                'latitude': 31.630000,
+                'longitude': -8.008889
+            },
+            {
+                'latitude': 48.7667,
+                'longitude': 1.9167
+            }
+        ]
+
 
     def create(self, host=None, port=None, debug=None, load_dotenv=True, **options):
         app = self.app
@@ -68,12 +79,10 @@ class Covid19Monitor(object):
             gmap = Map(
                 identifier="gmap",
                 varname="gmap",
-                lat=31.630000,
-                lng=-8.008889,
-                markers=
-                    {
-                        icons.dots.red: [(31.630000, -8.008889)]
-                    },
+                lat=self.locations[0]['latitude'],
+                lng=self.locations[0]['longitude'],
+                markers=[(loc['latitude'], loc['longitude']) for loc in self.locations],
+                fit_markers_to_bounds = True,
                 style="height:720px;width:1280px;margin:auto;",
             )
             return render_template('map.html', gmap=gmap)
