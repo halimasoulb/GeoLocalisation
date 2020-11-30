@@ -6,7 +6,9 @@ from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm
 #from dbconnect import connection
 #from pymysql import escape_string as thwart
-from model import *
+from model import cas
+from flask_sqlalchemy import SQLAlchemy
+#import sqlalchemy as db
 
 from flask_googlemaps import GoogleMaps, Map, icons
 
@@ -49,21 +51,25 @@ class Covid19Monitor(object):
                 date_enregistrement =  datetime.now()
                 prenom = form.prenom.data
                 nom = form.nom.data
-                date = form.date_de_naissance.data
+                date = form.date.data
                 lieu_de_naissance = form.lieu_de_naissance.data
                 cin = form.cin.data
                 position = json.dumps(self.position)
+                #engine = db.create_engine('sqlite:///test.sqlite')
+                #metadata = db.MetaData()
+                #connection = engine.connect()
+                #emp = db.Table('emp', metadata, autoload=True, autoload_with=engine)
                 self.db.create_all()
-                cases = cases(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
+                cases = cas(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
                 self.db.session.add(cases)
-                self. db.session.commit()
+                self.db.session.commit()
                 #c,conn = connection()
                 #c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position) VALUES (%s, %s, %s, %s, %s, %s, '"+position+"')",
                 #        (thwart(prenom), thwart (nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
 
                 #conn.commit()
                 redirect(url_for('home'))
-                flash(f'Un nouveau cas est enregistre')
+                flash('Un nouveau cas est enregistre')
                 self.db.session.close()
 
                 #c.close()
