@@ -61,7 +61,7 @@ class Covid19Monitor(object):
                 #metadata = db.MetaData()
                 #connection = engine.connect()
                 #emp = db.Table('emp', metadata, autoload=True, autoload_with=engine)
-                #self.db.create_all()
+                self.db.create_all()
                 cases = Cas(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
                 self.db.session.add(cases)
                 self.db.session.commit()
