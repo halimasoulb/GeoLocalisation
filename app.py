@@ -6,7 +6,7 @@ from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm
 #from dbconnect import connection
 #from pymysql import escape_string as thwart
-from model import cas
+from modeldb import Cas
 from flask_sqlalchemy import SQLAlchemy
 #import sqlalchemy as db
 
@@ -19,8 +19,10 @@ class Covid19Monitor(object):
         self.app = Flask(__name__)
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
-        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///Register.sqlite3'
+        self.app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b'
         self.db = SQLAlchemy(self.app)
+        self.db.create_all()
+        self.db.session.commit()
         self.app.config['DEBUG'] = True
         self.app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
         self.position = {'latitude': 0, 'longitude': 0}
@@ -59,8 +61,8 @@ class Covid19Monitor(object):
                 #metadata = db.MetaData()
                 #connection = engine.connect()
                 #emp = db.Table('emp', metadata, autoload=True, autoload_with=engine)
-                self.db.create_all()
-                cases = cas(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
+                #self.db.create_all()
+                cases = Cas(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
                 self.db.session.add(cases)
                 self.db.session.commit()
                 #c,conn = connection()
