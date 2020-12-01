@@ -3,3 +3,4 @@ flask_wtf
 flask_googlemaps
 gunicorn
 flask_sqlalchemy 
+psycopg2
