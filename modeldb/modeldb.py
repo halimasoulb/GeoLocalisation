@@ -3,7 +3,8 @@ from sqlalchemy.ext.mutable import MutableDict
 from datetime import datetime
 import sqlalchemy as db
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Integer, DateTime, JSON
+from sqlalchemy import Column, String, Integer, DateTime, JSON, create_engine
+from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
@@ -30,7 +31,18 @@ class Cas(Base):
     self.date_enregistrement = date_enregistrement
     self.position = position
 
-  def __repr__(self):
-    return '<Register %r>' % self.prenom
+  def add_case(self, cas):
+    engine= create_engine('postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b', echo=True)
+    Base.metadata.create_all(bind=engine)
+    Session = sessionmaker(bind=engine)
+    session = Session()
+    session.add(cas)
+    session.commit()
+    session.close()
 
 
+
+
+
+
+ 

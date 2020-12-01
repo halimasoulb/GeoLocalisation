@@ -58,17 +58,14 @@ class Covid19Monitor(object):
                 lieu_de_naissance = form.lieu_de_naissance.data
                 cin = form.cin.data
                 position = json.dumps(self.position)
-                #engine = db.create_engine('sqlite:///test.sqlite')
-                #metadata = db.MetaData()
-                #connection = engine.connect()
-                #emp = db.Table('emp', metadata, autoload=True, autoload_with=engine)
-                engine = create_engine('postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b')
-                Session = sessionmaker(bind=engine)
-                session = Session()
+                #engine = create_engine('postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b', echo=True)
                 #self.db.create_all()
-                cases = Cas(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
-                session.add(cases)
-                session.commit()
+                cases= Cas(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
+                case = cases.add_case(cases)
+                #cases = Cas(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
+                #session.add(cases)
+                #session.commit()
+                #session.close()
                 #c,conn = connection()
                 #c.execute("INSERT INTO  register (prenom, nom, date_de_naissance, lieu_de_naissance, cin, date_enregistrement, position) VALUES (%s, %s, %s, %s, %s, %s, '"+position+"')",
                 #        (thwart(prenom), thwart (nom), thwart(date_de_naissance), thwart(lieu_de_naissance), thwart(cin), thwart(date_enregistrement)))
@@ -76,7 +73,7 @@ class Covid19Monitor(object):
                 #conn.commit()
                 redirect(url_for('home'))
                 flash('Un nouveau cas est enregistre')
-                self.db.session.close()
+                #self.db.session.close()
 
                 #c.close()
                 #conn.close()
