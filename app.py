@@ -61,7 +61,7 @@ class Covid19Monitor(object):
                 cases= Cas(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
                 case = cases.add_case(cases)
                 redirect(url_for('home'))
-                flash(f'Un nouveau cas est enregistre', success)
+                flash(f'Un nouveau cas est enregistre', 'success')
                 return redirect(url_for('home'))
 
             return render_template('register.html', title='Register', form=form)
