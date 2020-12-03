@@ -1,18 +1,38 @@
 from datetime import datetime
-import json
+import enum, json
 from threading import Condition
 
 from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm
-#from dbconnect import connection
-#from pymysql import escape_string as thwart
-from modeldb import Cas
-from flask_sqlalchemy import SQLAlchemy
-#import sqlalchemy as db
 
 from flask_googlemaps import GoogleMaps, Map, icons
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Column, String, Integer, DateTime, JSON, Enum, create_engine
+from sqlalchemy.orm import sessionmaker
+
+Base = declarative_base()
+
+class CaseType(enum.Enum):
+    NEW = "Confirmé"
+    RECOVERED = "Guéri"
+    DEAD = "Décédé"
+
+class Case(Base):
+    __tablename__ = 'Covid19Cases'
+
+    id = Column('id', Integer, primary_key = True) 
+    nom = Column(String(50), nullable=False)  
+    prenom= Column(String(50), nullable=False)
+    cin = Column(String(10), nullable=False)
+    type = Column(Enum(CaseType))
+    position = Column(JSON())
+    date = Column(DateTime)
+
+    def __repr__(self):
+        return "<Cas(nom='%s', prenom='%s', cin='%s', type='%s', position='%s' date='%s')>" % (
+            self.nom, self.prenom, self.cin, self.type.value, self.position, self.date)
 
 
 class Covid19Monitor(object):
@@ -21,22 +41,15 @@ class Covid19Monitor(object):
         self.app = Flask(__name__)
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
-        #self.app.config['SQLALCHEMY_DATABASE_URI'] = 'postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b'
-        #self.db = SQLAlchemy(self.app)
-        #self.db.create_all()
+        engine = create_engine('sqlite:///cases.db', echo=False)
+        Base.metadata.create_all(engine)
+        Session = sessionmaker(bind=engine)
+        self.session = Session()
+
         self.app.config['DEBUG'] = True
         self.app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
         self.position = {'latitude': 0, 'longitude': 0}
-        self.locations = [
-            {
-                'latitude': 31.630000,
-                'longitude': -8.008889
-            },
-            {
-                'latitude': 48.7667,
-                'longitude': 1.9167
-            }
-        ]
+        self.locations = []
 
 
     def create(self, host=None, port=None, debug=None, load_dotenv=True, **options):
@@ -51,15 +64,13 @@ class Covid19Monitor(object):
         def register():
             form = RegistrationForm()
             if request.method == "POST" and form.validate():
-                date_enregistrement =  datetime.now()
                 prenom = form.prenom.data
                 nom = form.nom.data
-                date = form.date.data
-                lieu_de_naissance = form.lieu_de_naissance.data
                 cin = form.cin.data
-                position = json.dumps(self.position)
-                cases= Cas(prenom, nom, date, lieu_de_naissance, cin, date_enregistrement, position)
-                case = cases.add_case(cases)
+                date = form.date.data
+                cas = Case(prenom=prenom, nom=nom, cin=cin, type=CaseType.NEW, position=self.position, date=date)
+                self.session.add(cas)
+                self.session.commit()    
                 redirect(url_for('home'))
                 flash(f'Un nouveau cas est enregistre', 'success')
                 return redirect(url_for('home'))
@@ -77,12 +88,17 @@ class Covid19Monitor(object):
 
         @app.route("/monitor", methods=['GET', 'POST'])
         def monitor():
+            case = self.session.query(Case).first() 
+            print(case)
+
+            locations = []
+            locations.append(case.position)
             gmap = Map(
                 identifier="gmap",
                 varname="gmap",
-                lat=self.locations[0]['latitude'],
-                lng=self.locations[0]['longitude'],
-                markers=[(loc['latitude'], loc['longitude']) for loc in self.locations],
+                lat=locations[0]['latitude'],
+                lng=locations[0]['longitude'],
+                markers=[(loc['latitude'], loc['longitude']) for loc in locations],
                 fit_markers_to_bounds = True,
                 style="height:720px;width:1280px;margin:auto;",
             )
