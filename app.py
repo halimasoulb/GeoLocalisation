@@ -88,18 +88,18 @@ class Covid19Monitor(object):
 
         @app.route("/monitor", methods=['GET', 'POST'])
         def monitor():
-            case = self.session.query(Case).first() 
-            print(case)
-
             locations = []
-            locations.append(case.position)
+            cases = self.session.query(Case).all()
+            for case in cases:
+                locations.append(case.position)
+
             gmap = Map(
                 identifier="gmap",
                 varname="gmap",
                 lat=locations[0]['latitude'],
                 lng=locations[0]['longitude'],
                 markers=[(loc['latitude'], loc['longitude']) for loc in locations],
-                fit_markers_to_bounds = True,
+                fit_markers_to_bounds = False,
                 style="height:720px;width:1280px;margin:auto;",
             )
             return render_template('map.html', gmap=gmap)
