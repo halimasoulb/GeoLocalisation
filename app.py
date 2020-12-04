@@ -86,7 +86,7 @@ class Covid19Monitor(object):
                 cases = self.session.query(Case).all()
                 for case in cases:
                     if form.cin.data == case.cin:
-                        self.session.query(Case).filter(Case.type == CaseType.NEW.value).update({Case.type: form.etat.data}, synchronize_session = False)
+                        self.session.query(Case).filter(case.type == CaseType.NEW.value).update({case.type: form.etat.data}, synchronize_session = False)
                         self.session.commit()
                         redirect(url_for('home'))
                         flash('L etat du malade a ete modifie')
