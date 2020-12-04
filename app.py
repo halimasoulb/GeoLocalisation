@@ -43,7 +43,7 @@ class Covid19Monitor(object):
         self.app = Flask(__name__)
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
-        engine = create_engine('sqlite:///cases.db', echo=False)
+        engine = create_engine('postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b', echo=False)
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
@@ -74,7 +74,7 @@ class Covid19Monitor(object):
                 self.session.add(cas)
                 self.session.commit()    
                 redirect(url_for('home'))
-                flash(f'Un nouveau cas est enregistre', 'success')
+                flash('Un nouveau cas est enregistre')
                 return redirect(url_for('home'))
 
             return render_template('register.html', title='Register', form=form)
@@ -89,10 +89,10 @@ class Covid19Monitor(object):
                         self.session.query(Case).filter(Case.type == CaseType.NEW.value).update({Case.type: form.etat.data}, synchronize_session = False)
                         self.session.commit()
                         redirect(url_for('home'))
-                        flash(f'L etat du malade a ete modifie', 'success')
+                        flash('L etat du malade a ete modifie')
                         return redirect(url_for('home'))
                     else:
-                        flash(f'Il nexiste aucun cas portant ce cin', 'success')
+                        flash('Il nexiste aucun cas portant ce cin')
 
             return render_template('update.html', title='Update', form=form)
                 
