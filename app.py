@@ -4,6 +4,7 @@ from threading import Condition
 
 from flask import Flask, render_template, url_for, flash, redirect, request
 from forms import RegistrationForm
+from forms import ChangeStatus
 
 from flask_googlemaps import GoogleMaps, Map, icons
 from sqlalchemy.orm import sessionmaker
@@ -15,9 +16,10 @@ from sqlalchemy.orm import sessionmaker
 Base = declarative_base()
 
 class CaseType(enum.Enum):
-    NEW = "Confirmé"
-    RECOVERED = "Guéri"
-    DEAD = "Décédé"
+    NEW = "Confirme"
+    RECOVERED = "Gueri"
+    DEAD = "Decede"
+
 
 class Case(Base):
     __tablename__ = 'Covid19Cases'
@@ -76,6 +78,24 @@ class Covid19Monitor(object):
                 return redirect(url_for('home'))
 
             return render_template('register.html', title='Register', form=form)
+
+        @app.route('/update', methods = ['GET','POST'])
+        def update():
+            form = ChangeStatus()
+            if request.method == 'POST' and form.validate():
+                cases = self.session.query(Case).all()
+                for case in cases:
+                    if form.cin.data == case.cin:
+                        self.session.query(Case).filter(Case.type == CaseType.NEW.value).update({Case.type: form.etat.data}, synchronize_session = False)
+                        self.session.commit()
+                        redirect(url_for('home'))
+                        flash(f'L etat du malade a ete modifie', 'success')
+                        return redirect(url_for('home'))
+                    else:
+                        flash(f'Il nexiste aucun cas portant ce cin', 'success')
+
+            return render_template('update.html', title='Update', form=form)
+                
 
         @app.route('/position', methods = ['POST'])
         def position():

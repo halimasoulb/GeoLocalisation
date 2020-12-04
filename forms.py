@@ -1,8 +1,15 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateField, SubmitField
+from wtforms import StringField, DateField, SubmitField, SelectField
 from wtforms.validators import DataRequired, Length, Email, EqualTo
 from datetime import datetime
+import enum
+from sqlalchemy import Enum
 
+
+class CaseType(enum.Enum):
+    NEW = "Confirme"
+    RECOVERED = "Gueri"
+    DEAD = "Decede"
 
 class RegistrationForm(FlaskForm):
     prenom = StringField('Prenom',
@@ -16,3 +23,12 @@ class RegistrationForm(FlaskForm):
                            validators=[DataRequired(), Length(min=8, max=9)], render_kw={"placeholder": "xxxxxxxx"})
    
     submit = SubmitField('Enregistrer')
+
+
+class ChangeStatus(FlaskForm):
+	cin = StringField('CIN',
+                           validators=[DataRequired(), Length(min=8, max=9)], render_kw={"placeholder": "xxxxxxxx"})
+
+	etat = SelectField('Etat malade',
+							choices=[(CaseType.RECOVERED.value), (CaseType.DEAD.value)], validators=[ DataRequired()])
+	submit = SubmitField('Modifier')
