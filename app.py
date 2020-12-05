@@ -15,20 +15,22 @@ from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
-class CaseType(enum.Enum):
-    NEW = "Confirme"
-    RECOVERED = "Gueri"
-    DEAD = "Decede"
+
 
 
 class Case(Base):
     __tablename__ = 'Covid19Cases'
 
+    class Type(enum.Enum):
+        NEW = "Confirmé"
+        RECOVERED = "Guéri"
+        DEAD = "Décédé"
+
     id = Column('id', Integer, primary_key = True) 
     nom = Column(String(50), nullable=False)  
     prenom= Column(String(50), nullable=False)
     cin = Column(String(10), nullable=False)
-    type = Column(Enum(CaseType))
+    type = Column(Enum(Type))
     position = Column(JSON())
     date = Column(DateTime)
 
@@ -70,7 +72,7 @@ class Covid19Monitor(object):
                 nom = form.nom.data
                 cin = form.cin.data
                 date = form.date.data
-                cas = Case(prenom=prenom, nom=nom, cin=cin, type=CaseType.NEW, position=self.position, date=date)
+                cas = Case(prenom=prenom, nom=nom, cin=cin, type=Case.Type.NEW, position=self.position, date=date)
                 self.session.add(cas)
                 self.session.commit()    
                 redirect(url_for('home'))
@@ -81,12 +83,12 @@ class Covid19Monitor(object):
 
         @app.route('/update', methods = ['GET','POST'])
         def update():
-            form = ChangeStatus()
+            form = ChangeStatus([Case.Type.RECOVERED.value,Case.Type.DEAD.value])
             if request.method == 'POST' and form.validate():
                 cases = self.session.query(Case).all()
                 for case in cases:
                     if form.cin.data == case.cin:
-                        self.session.query(Case).filter(case.type == CaseType.NEW.value).update({case.type: form.etat.data}, synchronize_session = False)
+                        self.session.query(Case).filter(case.type == Case.Type.NEW.value).update({case.type: form.status.data}, synchronize_session = False)
                         self.session.commit()
                         redirect(url_for('home'))
                         flash('L etat du malade a ete modifie')

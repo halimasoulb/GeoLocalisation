@@ -6,10 +6,6 @@ import enum
 from sqlalchemy import Enum
 
 
-class CaseType(enum.Enum):
-    NEW = "Confirme"
-    RECOVERED = "Gueri"
-    DEAD = "Decede"
 
 class RegistrationForm(FlaskForm):
     prenom = StringField('Prenom',
@@ -25,10 +21,15 @@ class RegistrationForm(FlaskForm):
     submit = SubmitField('Enregistrer')
 
 
-class ChangeStatus(FlaskForm):
-	cin = StringField('CIN',
+class ChangeStatus(FlaskForm):    
+    cin = StringField('CIN',
                            validators=[DataRequired(), Length(min=8, max=9)], render_kw={"placeholder": "xxxxxxxx"})
+    
+    status = SelectField('Etat malade', choices=[], 
+                        validators=[ DataRequired()])    
 
-	etat = SelectField('Etat malade',
-							choices=[(CaseType.RECOVERED.value), (CaseType.DEAD.value)], validators=[ DataRequired()])
-	submit = SubmitField('Modifier')
+    submit = SubmitField('Modifier')
+
+    def __init__(self, states, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.status.choices = states
