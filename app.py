@@ -22,9 +22,9 @@ class Case(Base):
     __tablename__ = 'Covid19Cases'
 
     class Type(enum.Enum):
-        NEW = "Confirmé"
-        RECOVERED = "Guéri"
-        DEAD = "Décédé"
+        NEW = "Confirme"
+        RECOVERED = "Gueri"
+        DEAD = "Decede"
 
     id = Column('id', Integer, primary_key = True) 
     nom = Column(String(50), nullable=False)  
@@ -62,7 +62,8 @@ class Covid19Monitor(object):
         @app.route("/")
         @app.route("/home")
         def home():
-            return render_template('home.html')
+            nbre_cas = self.session.query(Case).count()
+            return render_template('home.html', new=nbre_cas)
 
         @app.route("/register", methods=['GET', 'POST'])
         def register():
@@ -85,16 +86,15 @@ class Covid19Monitor(object):
         def update():
             form = ChangeStatus([Case.Type.RECOVERED.value,Case.Type.DEAD.value])
             if request.method == 'POST' and form.validate():
-                cases = self.session.query(Case).all()
-                for case in cases:
-                    if form.cin.data == case.cin:
-                        self.session.query(Case).filter(case.type == Case.Type.NEW.value).update({case.type: form.status.data}, synchronize_session = False)
-                        self.session.commit()
-                        redirect(url_for('home'))
-                        flash('L etat du malade a ete modifie')
-                        return redirect(url_for('home'))
-                    else:
-                        flash('Il nexiste aucun cas portant ce cin')
+                cases = self.session.query(Case).filter(case.cin == form.cin.data).all()
+                if cases.count() > 1:
+                    flash('La valeur du cin est dupplique')
+                else:
+                    self.session.query(Case).filter(case.type == Case.Type.NEW.value).update({case.type: form.status.data}, synchronize_session = False)
+                    self.session.commit()
+                    redirect(url_for('home'))
+                    flash('L etat du malade a ete modifie')
+                    return redirect(url_for('home'))
 
             return render_template('update.html', title='Update', form=form)
                 
