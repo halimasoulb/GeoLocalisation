@@ -84,13 +84,13 @@ class Covid19Monitor(object):
 
         @app.route('/update', methods = ['GET','POST'])
         def update():
-            form = ChangeStatus([Case.Type.RECOVERED.value,Case.Type.DEAD.value])
+            form = ChangeStatus([Case.Type.NEW.value, Case.Type.RECOVERED.value,Case.Type.DEAD.value])
             if request.method == 'POST' and form.validate():
                 cases = self.session.query(Case).filter(case.cin == form.cin.data).all()
                 if cases.count() > 1:
                     flash('La valeur du cin est dupplique')
                 else:
-                    self.session.query(Case).filter(case.type == Case.Type.NEW.value).update({case.type: form.status.data}, synchronize_session = False)
+                    self.session.query(Case).filter(cases.type == form[0]).update({cases.type: form.status.data}, synchronize_session = False)
                     self.session.commit()
                     redirect(url_for('home'))
                     flash('L etat du malade a ete modifie')
