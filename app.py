@@ -64,7 +64,7 @@ class Covid19Monitor(object):
         @app.route("/home")
         def home():
             nbre_cas = self.session.query(Case).count()
-            return render_template('home.html', new=nbre_cas)
+            return render_template('home.html', new=20000, recovered=2000, dead=800)
 
         @app.route("/register", methods=['GET', 'POST'])
         def register():

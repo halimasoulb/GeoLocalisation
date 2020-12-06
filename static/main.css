@@ -50,3 +50,48 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 3rem !important;
 }
 
+
+.cases-container
+{
+  margin-top: 20px; 
+  display: flex;
+  flex-direction: row;
+  flex-flow: wrap;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.case-box {
+  background-color: white;
+  width: 30%;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 10px 10px rgba(0,0,0,0.5);
+}
+
+@media screen and (max-width: 1200px){
+  .case-box {
+    width: 80%
+  }
+}
+
+@media screen and (max-width: 600px){
+  .case-box {
+    width: 90%
+  }
+}
+
+.case-number {
+  line-height: 1;
+  font-size: 40px;
+  font-weight: bold;
+  text-align: left;
+
+}
+
+.case-type {
+  line-height: 1;
+  font-size: 18px;
+  text-align: right;
+}
