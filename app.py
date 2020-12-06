@@ -22,9 +22,9 @@ class Case(Base):
     __tablename__ = 'Covid19Cases'
 
     class Type(enum.Enum):
-        NEW = "Confirmé"
-        RECOVERED = "Guéri"
-        DEAD = "Décédé"
+        NEW = "Confirme"
+        RECOVERED = "Gueri"
+        DEAD = "Decede"
 
     id = Column('id', Integer, primary_key = True) 
     nom = Column(String(50), nullable=False)  
@@ -45,8 +45,8 @@ class Covid19Monitor(object):
         self.app = Flask(__name__)
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
-        engine = create_engine('postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b', echo=False)
-        #engine = create_engine('sqlite:///cases.db?check_same_thread=False')
+        #engine = create_engine('postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b', echo=False)
+        engine = create_engine('sqlite:///cases.db?check_same_thread=False')
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
@@ -70,17 +70,21 @@ class Covid19Monitor(object):
         def register():
             form = RegistrationForm()
             if request.method == "POST" and form.validate():
-                prenom = form.prenom.data
-                nom = form.nom.data
-                cin = form.cin.data
-                date = form.date.data
-                cas = Case(prenom=prenom, nom=nom, cin=cin, type=Case.Type.NEW.value, position=self.position, date=date)
-                print(cas)
-                self.session.add(cas)
-                self.session.commit()    
-                redirect(url_for('home'))
-                flash('Un nouveau cas est enregistre')
-                return redirect(url_for('home'))
+                cases = self.session.query(Case).filter_by(cin=form.cin.data).all()
+                if len(cases) > 1:
+                    print('Le patient portant ce cin existe deja')
+                else:
+                    prenom = form.prenom.data
+                    nom = form.nom.data
+                    cin = form.cin.data
+                    date = form.date.data
+                    cas = Case(nom=nom, prenom=prenom, cin=cin, type=Case.Type.NEW.value, position=self.position, date=date)
+                    print(cas)
+                    self.session.add(cas)
+                    self.session.commit()
+                    redirect(url_for('home'))
+                    flash('Un nouveau cas est enregistre')
+                    return redirect(url_for('home'))
 
             return render_template('register.html', title='Register', form=form)
 
@@ -90,15 +94,15 @@ class Covid19Monitor(object):
             if request.method == 'POST' and form.validate():
                 cases = self.session.query(Case).filter_by(cin=form.cin.data).all()
                 if len(cases) == 0:
-                    flash("Le patient avec cin = "+form.cin.data+" n'est pas enregistré" )
+                    flash("Le patient avec cin = "+form.cin.data+" n'est pas enregistre" )
                 elif len(cases) == 1:
                     self.session.query(Case).filter(Case.cin == form.cin.data).update({Case.type: form.status.data}, synchronize_session=False)
                     self.session.commit()
                     redirect(url_for('home'))
-                    flash("L'état du malade " + cases[0].nom + " " + cases[0].prenom + " a été modifié")
+                    flash("L'etat du malade " + cases[0].nom + " " + cases[0].prenom + " a ete modifie")
                     return redirect(url_for('home'))
                 else:
-                    flash("Le patient avec cin = "+form.cin.data+" est enregistré " +str(len(cases)) + " fois" )
+                    flash("Le patient avec cin = "+form.cin.data+" est enregistre " +str(len(cases)) + " fois" )
 
 
             return render_template('update.html', title='Update', form=form)
