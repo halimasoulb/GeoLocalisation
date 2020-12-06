@@ -15,9 +15,6 @@ from sqlalchemy.orm import sessionmaker
 
 Base = declarative_base()
 
-
-
-
 class Case(Base):
     __tablename__ = 'Covid19Cases'
 
@@ -72,7 +69,8 @@ class Covid19Monitor(object):
             if request.method == "POST" and form.validate():
                 cases = self.session.query(Case).filter_by(cin=form.cin.data).all()
                 if len(cases) > 1:
-                    print('Le patient portant ce cin existe deja')
+                    flash('Le patient portant ce cin existe deja')
+                    return redirect(url_for('home'))
                 else:
                     prenom = form.prenom.data
                     nom = form.nom.data
