@@ -31,5 +31,5 @@ class ChangeStatus(FlaskForm):
     submit = SubmitField('Modifier')
 
     def __init__(self, states, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ChangeStatus, self).__init__(*args, **kwargs)
         self.status.choices = states
