@@ -16,14 +16,14 @@ class RegistrationForm(FlaskForm):
     date = DateField('Date (optional)', format='%Y-%m-%d %H:%M:%S', default=datetime.today, render_kw={"placeholder": "1997-06-24"} )
 
     cin = StringField('CIN',
-                           validators=[DataRequired(), Regexp('^[a-zA-Z]{1,2}[0-9]{6}$'), Length(min=8, max=9)], render_kw={"placeholder": "xxxxxxxx"})
+                           validators=[DataRequired(), Regexp('^[A-Za-z]{1,2}[0-9]{6,7}$')], render_kw={"placeholder": "xxxxxxxx"})
    
     submit = SubmitField('Enregistrer')
 
 
 class ChangeStatus(FlaskForm):    
     cin = StringField('CIN',
-                           validators=[DataRequired(), Length(min=8, max=9)], render_kw={"placeholder": "xxxxxxxx"})
+                           validators=[DataRequired(), Regexp('^[A-Za-z]{1,2}[0-9]{6,7}$')], render_kw={"placeholder": "xxxxxxxx"})
     
     status = SelectField('Etat malade', choices=[], 
                         validators=[ DataRequired()])    

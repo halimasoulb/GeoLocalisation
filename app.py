@@ -42,7 +42,7 @@ class Covid19Monitor(object):
         self.app = Flask(__name__)
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
-        engine = create_engine('postgres://leyuerbdnpvfns:084836b16199ffa8454ba3736cf63795ab8309f5692a8f286c36ca93268aaad0@ec2-52-22-238-188.compute-1.amazonaws.com:5432/d7c42auhofkp0l', echo=False)
+        engine = create_engine('postgres://ylqfxccdfjuyxq:c2333683a5e8c1ce6e4181649d6ac17c7fd0ea295c6e95912d0491a3dcb8e06a@ec2-34-235-62-201.compute-1.amazonaws.com:5432/d70geiadvmd06v', echo=False)
         #engine = create_engine('sqlite:///cas.db')
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
