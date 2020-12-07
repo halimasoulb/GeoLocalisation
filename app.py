@@ -24,10 +24,10 @@ class Case(Base):
         DEAD = "Decede"
 
     id = Column('id', Integer, primary_key = True) 
-    nom = Column(String(50), nullable=False)  
-    prenom= Column(String(50), nullable=False)
-    cin = Column(String(10), nullable=False)
-    type = Column(String(50), nullable=False)
+    nom = Column(String(50))  
+    prenom= Column(String(50))
+    cin = Column(String(10))
+    type = Column(String(50))
     position = Column(JSON())
     date = Column(DateTime)
 
@@ -42,8 +42,8 @@ class Covid19Monitor(object):
         self.app = Flask(__name__)
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
-        engine = create_engine('postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b', echo=False)
-        #engine = create_engine('sqlite:///cases.db')
+        engine = create_engine('postgres://leyuerbdnpvfns:084836b16199ffa8454ba3736cf63795ab8309f5692a8f286c36ca93268aaad0@ec2-52-22-238-188.compute-1.amazonaws.com:5432/d7c42auhofkp0l', echo=False)
+        #engine = create_engine('sqlite:///cas.db')
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
@@ -60,8 +60,10 @@ class Covid19Monitor(object):
         @app.route("/")
         @app.route("/home")
         def home():
-            nbre_cas = self.session.query(Case).all()
-            return render_template('home.html', new=20000, recovered=2000, dead=800)
+            nbre_cas = self.session.query(Case).count()
+            nbre_gueri = self.session.query(Case).filter_by(type=Case.Type.RECOVERED.value).count()
+            nbre_mort = self.session.query(Case).filter_by(type=Case.Type.DEAD.value).count()
+            return render_template('home.html', new=nbre_cas, recovered=nbre_gueri, dead=nbre_mort)
 
         @app.route("/register", methods=['GET', 'POST'])
         def register():
@@ -77,13 +79,12 @@ class Covid19Monitor(object):
                     cin = form.cin.data
                     date = form.date.data
                     cas = Case(nom=nom, prenom=prenom, cin=cin, type=Case.Type.NEW.value, position=self.position, date=date)
-                    print(cas)
                     self.session.add(cas)
                     self.session.commit()
+                    self.session.close()
                     redirect(url_for('home'))
                     flash('Un nouveau cas est enregistre')
                     return redirect(url_for('home'))
-
             return render_template('register.html', title='Register', form=form)
 
         @app.route('/update', methods = ['GET','POST'])
