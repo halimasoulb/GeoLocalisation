@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, DateField, SubmitField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo
+from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
 from datetime import datetime
 import enum
 from sqlalchemy import Enum
@@ -16,7 +16,7 @@ class RegistrationForm(FlaskForm):
     date = DateField('Date (optional)', format='%Y-%m-%d %H:%M:%S', default=datetime.today, render_kw={"placeholder": "1997-06-24"} )
 
     cin = StringField('CIN',
-                           validators=[DataRequired(), Length(min=8, max=9)], render_kw={"placeholder": "xxxxxxxx"})
+                           validators=[DataRequired(), Regexp('^[a-zA-Z]{1,2}[0-9]{6}$'), Length(min=8, max=9)], render_kw={"placeholder": "xxxxxxxx"})
    
     submit = SubmitField('Enregistrer')
 

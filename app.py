@@ -71,7 +71,7 @@ class Covid19Monitor(object):
             if request.method == "POST" and form.validate():
                 cases = self.session.query(Case).filter_by(cin=form.cin.data).all()
                 if len(cases) > 1:
-                    flash('Le patient portant ce cin existe deja')
+                    flash(f'Le patient portant ce cin existe deja', 'success')
                     return redirect(url_for('home'))
                 else:
                     prenom = form.prenom.data
@@ -83,7 +83,7 @@ class Covid19Monitor(object):
                     self.session.commit()
                     self.session.close()
                     redirect(url_for('home'))
-                    flash('Un nouveau cas est enregistre')
+                    flash(f'Un nouveau cas est enregistre', 'success')
                     return redirect(url_for('home'))
             return render_template('register.html', title='Register', form=form)
 
@@ -93,12 +93,12 @@ class Covid19Monitor(object):
             if request.method == 'POST' and form.validate():
                 cases = self.session.query(Case).filter_by(cin=form.cin.data).all()
                 if len(cases) == 0:
-                    flash("Le patient avec cin = "+form.cin.data+" n'est pas enregistre" )
+                    flash(f"Le patient avec cin = "+form.cin.data+" n'est pas enregistre", "success")
                 elif len(cases) == 1:
                     self.session.query(Case).filter(Case.cin == form.cin.data).update({Case.type: form.status.data}, synchronize_session=False)
                     self.session.commit()
                     redirect(url_for('home'))
-                    flash("L'etat du malade " + cases[0].nom + " " + cases[0].prenom + " a ete modifie")
+                    flash(f"L'etat du malade " + cases[0].nom + " " + cases[0].prenom + " a ete modifie", "success")
                     return redirect(url_for('home'))
                 else:
                     flash("Le patient avec cin = "+form.cin.data+" est enregistre " +str(len(cases)) + " fois" )
