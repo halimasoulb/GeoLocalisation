@@ -42,8 +42,8 @@ class Covid19Monitor(object):
         self.app = Flask(__name__)
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
-        #engine = create_engine('postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b', echo=False)
-        engine = create_engine('sqlite:///cases.db?check_same_thread=False')
+        engine = create_engine('postgres://tygqsltanlysiq:68be0239d03e66b403a43f493822bb0d7b9b776be3d8c0399066436f7d77c6dd@ec2-3-210-23-22.compute-1.amazonaws.com:5432/d8rn5mpu5ua96b', echo=False)
+        #engine = create_engine('sqlite:///cases.db')
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
@@ -60,7 +60,7 @@ class Covid19Monitor(object):
         @app.route("/")
         @app.route("/home")
         def home():
-            nbre_cas = self.session.query(Case).count()
+            nbre_cas = self.session.query(Case).all()
             return render_template('home.html', new=20000, recovered=2000, dead=800)
 
         @app.route("/register", methods=['GET', 'POST'])
