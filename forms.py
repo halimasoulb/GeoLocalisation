@@ -13,17 +13,17 @@ class RegistrationForm(FlaskForm):
     nom = StringField('Nom',
                         validators=[DataRequired(), Length(min=2, max=20)], render_kw={"placeholder": "MERINI"})
 
-    date = DateField('Date (optional)', format='%Y-%m-%d %H:%M:%S', default=datetime.today, render_kw={"placeholder": "1997-06-24"} )
+    date = StringField("Date", id='datePicker')
 
     cin = StringField('CIN',
-                           validators=[DataRequired(), Regexp('^[A-Za-z]{1,2}[0-9]{6,7}$')], render_kw={"placeholder": "xxxxxxxx"})
+                           validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "AB123456"})
    
     submit = SubmitField('Enregistrer')
 
 
 class ChangeStatus(FlaskForm):    
     cin = StringField('CIN',
-                           validators=[DataRequired(), Regexp('^[A-Za-z]{1,2}[0-9]{6,7}$')], render_kw={"placeholder": "xxxxxxxx"})
+                           validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "xxxxxxxx"})
     
     status = SelectField('Etat malade', choices=[], 
                         validators=[ DataRequired()])    

@@ -1,27 +1,33 @@
 {% extends "layout.html" %}
 {% block content %}
     <script>
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(function(position) {
-                currentPosition = {
-                                    'latitude': position.coords.latitude,
-                                    'longitude': position.coords.longitude
-                                  } 
-                $.ajax({
-                    url: '/position',
-                    type: 'POST',
-                    data: JSON.stringify(currentPosition),
-                    contentType: 'application/json;charset=UTF-8',
-                    cache:false,
-                    error: function(response){
-                        alert('Error sending position')
-                    }
+        $(document).ready(function () {
+            $(function () {
+                $('#datePicker').datetimepicker();
+            })
+
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    currentPosition = {
+                                        'latitude': position.coords.latitude,
+                                        'longitude': position.coords.longitude
+                                      } 
+                    $.ajax({
+                        url: '/position',
+                        type: 'POST',
+                        data: JSON.stringify(currentPosition),
+                        contentType: 'application/json;charset=UTF-8',
+                        cache:false,
+                        error: function(response){
+                            alert('Error sending position')
+                        }
+                    });
                 });
-            });
-        } 
-        else {
-            alert("Geolocation is not supported by this browser.");
-        }
+            } 
+            else {
+                alert("Geolocation is not supported by this browser.");
+            }
+        })
         
     </script>
     <div class="register-section box" >
@@ -39,7 +45,7 @@
                 <div class="form-group">
                     {{render_field(form.cin)}}
                 </div>
-                <div class="form-group">
+                <div class="form-group input-group date">
                     {{render_field(form.date)}}
                 </div>
             </fieldset>
