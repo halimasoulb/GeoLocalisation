@@ -27,8 +27,8 @@ class Covid19Monitor(object):
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
         self.login_manager = LoginManager(self.app)
-        #engine = create_engine('postgres://ylqfxccdfjuyxq:c2333683a5e8c1ce6e4181649d6ac17c7fd0ea295c6e95912d0491a3dcb8e06a@ec2-34-235-62-201.compute-1.amazonaws.com:5432/d70geiadvmd06v', echo=False)
-        engine = create_engine('sqlite:///cas.db')
+        engine = create_engine('postgres://btdopsdlodkkkc:f2831c4692e5f0eedaa5769a343800697f23b11c339ee02629a13b8eff2e3503@ec2-3-218-123-191.compute-1.amazonaws.com:5432/dd9eehcgrnmn9m', echo=False)
+        #engine = create_engine('sqlite:///cas.db')
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
