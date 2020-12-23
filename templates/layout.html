@@ -30,15 +30,15 @@
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav" >
-            {% if g.user.is_authenticated %}
+            
             <a class="nav-item nav-link" style="text-align:right" href="{{ url_for('logout') }}">DECONNEXION</a><br>
             <a class="nav-item nav-link" style="text-align:right" href="{{ url_for('register') }}">AJOUTER</a>
             <a class="nav-item nav-link" style="text-align:right" href="{{ url_for('update') }}">MODIFIER</a>
             <a class="nav-item nav-link" style="text-align:right" href="{{ url_for('monitor') }}">VISUALISER</a>
-            {% else %}
+            
             <a class="nav-item nav-link"  style="text-align:right" href="{{ url_for('login') }}">SE CONNECTER</a><br>
             <a class="nav-item nav-link" style="text-align:right" href="{{ url_for('adduser') }}">S'ENREGISTRER</a><br>
-            {% endif %}
+            
              </div>
           </div>
         </div>
