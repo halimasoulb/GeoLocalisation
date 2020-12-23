@@ -2,6 +2,7 @@ flask
 flask_wtf
 flask_login
 flask_googlemaps
+email_validator
 gunicorn
 flask_sqlalchemy 
 psycopg2
