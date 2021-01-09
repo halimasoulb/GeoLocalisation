@@ -12,6 +12,18 @@
                 <div class="form-group">
                     {{render_field(form.status)}}  
                 </div>
+                <div class="form-group">
+                    {{render_field(form.date_hospitalisation)}}
+                </div>
+                <div class="form-group">
+                    {{render_field(form.date_guerison)}}  
+                </div>
+                <div class="form-group">
+                    {{render_field(form.lieu_hospitalisation)}}  
+                </div>
+                <div class="form-group">
+                    {{render_field(form.date_deces)}}  
+                </div>
             </fieldset>
             <div class="form-group">
                 {{ form.submit(class="btn btn-outline-info") }}

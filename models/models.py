@@ -22,13 +22,22 @@ class Case(Base):
     nom = Column(String(50))  
     prenom= Column(String(50))
     cin = Column(String(10))
+    date_de_naissance = Column(DateTime)
+    age =  Column(String(10))
     type = Column(String(50))
     position = Column(JSON())
     date = Column(DateTime)
+    sexe = Column(String(50))
+    adresse = Column(String(100))
+    residance = Column(String(50))
+    employe = Column(String(50))
+    id_societe = Column(String(50))
+    nom_societe = Column(String(50))
+    observation = Column(String(300))
 
     def __repr__(self):
-        return "<Cas(nom='%s', prenom='%s', cin='%s', type='%s', position='%s' date='%s')>" % (
-            self.nom, self.prenom, self.cin, self.type, self.position, self.date)
+        return "<Cas(nom='%s', prenom='%s', cin='%s', type='%s', position='%s', date_de_naissance='%s', age='%s', date='%s', sexe='%s', adresse='%s', residance='%s', employe='%s', id_societe='%s', nom_societe='%s', observation='%s')>" % (
+            self.nom, self.prenom, self.cin, self.type, self.position, self.date_de_naissance, self.age, self.date, self.sexe, self.adresse, self.residance, self.employe, self.id_societe, self.nom_societe, self.observation)
 
 class User(Base, UserMixin):
     __tablename__ = 'user'

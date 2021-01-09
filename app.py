@@ -27,8 +27,9 @@ class Covid19Monitor(object):
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
         self.login_manager = LoginManager(self.app)
-        engine = create_engine('postgres://btdopsdlodkkkc:f2831c4692e5f0eedaa5769a343800697f23b11c339ee02629a13b8eff2e3503@ec2-3-218-123-191.compute-1.amazonaws.com:5432/dd9eehcgrnmn9m', echo=False)
-        #engine = create_engine('sqlite:///cas.db')
+        #engine = create_engine('postgres://btdopsdlodkkkc:f2831c4692e5f0eedaa5769a343800697f23b11c339ee02629a13b8eff2e3503@ec2-3-218-123-191.compute-1.amazonaws.com:5432/dd9eehcgrnmn9m', echo=False)
+        engine = create_engine('sqlite:///cases.db')
+        self.app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
@@ -58,7 +59,7 @@ class Covid19Monitor(object):
             nbre_mort = self.session.query(Case).filter_by(type=Case.Type.DEAD.value).count()
             nbre_hosp = self.session.query(Case).filter_by(type=Case.Type.HOSPITILIZED.value).count()
             nbre_conf = self.session.query(Case).filter_by(type=Case.Type.CONFINED.value).count()
-            return render_template('home.html', new=nbre_cas, recovered=nbre_gueri, dead=nbre_mort, hosp=nbre_hosp, conf=nbre_conf)
+            return render_template('home.html', new=nbre_cas, recovered=nbre_gueri, dead=nbre_mort, hosp=nbre_hosp, conf=nbre_conf )
 
         @app.route('/login', methods=["GET", "POST"])
         def login():
@@ -83,7 +84,7 @@ class Covid19Monitor(object):
         def adduser():
             form = RegisterForm()
             if form.validate():
-                new_user = User(email=form.email.data, username=form.username.data, password=form.password.data)
+                new_user = User(email=form.email.data, password=form.password.data)
                 self.session.add(new_user)
                 self.session.commit()
                 self.session.close()
@@ -105,7 +106,18 @@ class Covid19Monitor(object):
                     nom = form.nom.data
                     cin = form.cin.data
                     date = form.date.data
-                    cas = Case(nom=nom, prenom=prenom, cin=cin, type=Case.Type.NEW.value, position=self.position, date=date)
+                    sexe = form.sexe.data
+                    today = datetime.date.today()
+                    date_de_naissance = form.date_de_naissance.data
+                    age  = today.year - date_de_naissance.year - ((today.month, today.day) < (date_de_naissance.month, date_de_naissance.day))
+                    adresse = form.adresse.data
+                    residance = form.residance.data
+                    employe = form.employe.data
+                    id_societe = form.id_societe.data
+                    nom_societe = form.nom_societe.data
+                    observation = form.observation.data
+                    cas = Case(nom=nom, prenom=prenom,cin=cin, type=Case.Type.NEW.value, position=position, date_de_naissance=date_de_naissance, 
+                        age=age, date=date, sexe=sexe, adresse=adresse, residance=residance, employe=employe, id_societe=id_societe, nom_societe=nom_societe, observqtion=observation)
                     self.session.add(cas)
                     self.session.commit()
                     self.session.close()

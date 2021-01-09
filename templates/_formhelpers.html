@@ -11,3 +11,14 @@
 {{ field(class="form-control form-control-lg") }}
 {% endif %}
 {% endmacro%}
+
+{% macro render_radio(field) %}
+{{field.label(class="control-label")| safe}}
+{% for item in field %}
+<div class="radio">
+	<label>
+		{{item|safe}} {{item.label.text|safe}}
+	</label>
+</div>
+{% endfor %}
+{% endmacro%}

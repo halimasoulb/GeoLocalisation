@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateTimeField, SubmitField, SelectField
+from wtforms import StringField, DateTimeField, SubmitField, SelectField, BooleanField, PasswordField, SubmitField, TextField, RadioField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
-from wtforms import BooleanField, PasswordField, SubmitField, TextField
 from datetime import datetime
 import enum
 from sqlalchemy import Enum
@@ -16,21 +15,42 @@ class RegistrationForm(FlaskForm):
     nom = StringField('Nom',
                         validators=[DataRequired(), Length(min=2, max=20)], render_kw={"placeholder": "NOM"})
 
-    date = DateTimeField("Date", id='datePicker', format="%m/%d/%Y %H:%M %p")
+    sexe = SelectField('Sexe', choices=[('1', 'Homme'), ('2', 'Femme')], validators=[ DataRequired()])
+    
+    date_de_naissance = DateTimeField("Date de naissance", id='datePicker', format="%m/%d/%Y")
 
-    cin = StringField('CIN',
-                           validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "AB123456"})
+    cin = StringField('CIN', validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "AB123456"})
+
+    date = DateTimeField("Date Declaration", id='datePicker', format="%m/%d/%Y")
+
+    adresse = TextField('Adresse',validators=[DataRequired(), Length(min=3, max=100)], render_kw={"placeholder": "CENTRE BOUSKOURA PRES DYAR AYOUB"})
+
+    residance = RadioField('Residant province', choices=[('1', 'oui'),('2', 'non')])
+
+    employe = RadioField('Employe province', choices=[('1', 'oui'),('2', 'non')])
+
+    id_societe = StringField('ID Societe', validators=[DataRequired(), Length(min=3, max=100)])
+
+    nom_societe = StringField('Nom Societe',  validators=[DataRequired(), Length(min=3, max=100)])
+
+    observation = TextAreaField("Observation", render_kw={"placeholder": "Est sortie de l'hopital le 12/05/2020 mais toujours positive covid-19"} )
    
     submit = SubmitField('Enregistrer')
 
 
 class ChangeStatus(FlaskForm):
 
-    cin = StringField('CIN',
-                           validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "xxxxxxxx"})
+    cin = StringField('CIN', validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "xxxxxxxx"})
     
-    status = SelectField('Etat malade', choices=[], 
-                        validators=[ DataRequired()])    
+    status = SelectField('Etat malade', choices=[], validators=[ DataRequired()])  
+
+    date_hospitalisation = DateTimeField("Date Hospitalisation", id='datePicker', format="%m/%d/%Y")
+
+    date_guerison = DateTimeField("Date guerison", id='datePicker', format="%m/%d/%Y")
+
+    lieu_hospitalisation = TextField('Lieu Hospitalisation',validators=[DataRequired(), Length(min=3, max=100)])
+
+    date_deces = DateTimeField("Date deces", id='datePicker', format="%m/%d/%Y")
 
     submit = SubmitField('Modifier')
 
@@ -52,8 +72,7 @@ class LoginForm(FlaskForm):
 
 
 class RegisterForm(FlaskForm):
-    username = TextField('Pseudo',
-            validators=[DataRequired(), Length(min=3, max=32)])
+    
     email = TextField('Email',
             validators=[DataRequired(), Email(), Length(min=6, max=40)], render_kw={"placeholder": "admin@gmail.com"})
     password = PasswordField('Mot de passe',
