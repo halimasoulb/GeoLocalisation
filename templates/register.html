@@ -4,6 +4,14 @@
         $(document).ready(function () {
             $(function () {
                 $('#datePicker').datetimepicker();
+                $('.datepicker').datepicker();
+            })
+
+            $(function () {
+                var e = document.getElementById("employe");
+                var cl = e.options[e.selectedIndex].value;
+                console.log(cl);
+                
             })
 
             if (navigator.geolocation) {
@@ -30,10 +38,13 @@
         })
         
         $('#employe').click(function(){
-            if($(this).val()=="non"){
+            var e = document.getElementById("employe");
+            var cl = e.options[e.selectedIndex].value;
+            console.log(cl);
+            if(cl =="non"){
                 $(".si-employe-province").hide('slow');
             }
-            if($(this).val()=="oui"){
+            if(cl =="oui"){
                 $(".si-employe-province").show('slow');
             }
         });
@@ -44,49 +55,50 @@
             {{ form.hidden_tag() }}
             {% from "_formhelpers.html" import render_field, render_radio %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Enregistrer cas</legend>
-                <div class="form-group" id="sec1" >
+                <legend class="border border-primary mb-4 col-md-12">Enregistrer Nouveaux Cas</legend>
+                <div class="form-group col-md-6" >
                     {{render_field(form.nom)}}
                 </div>
-                <div class="form-group" id="sec1">
+                <div class="form-group col-md-6">
                     {{render_field(form.prenom)}}  
                 </div>
-                <div class="form-group" >
+                <div class="form-group col-md-6" >
                     {{render_field(form.sexe)}}  
                 </div>
-                <div class="form-group" >
+                <div class="form-group col-md-6" >
                     {{render_field(form.cin)}}
                 </div>
-                <div class="form-group input-group date">
+                <div class="form-group col-md-4" data-provide="datepicker">
                     {{render_field(form.date_de_naissance)}}
                 </div>
-                <div class="form-group">
+                <div class="form-group col-md-8">
                     {{render_field(form.adresse)}}
                 </div>
-                <div class="form-group">
+                <div class="form-group col-md-12">
+                    {{render_field(form.date)}}
+                </div>
+                <legend class="border border-secondary mb-4 col-md-12">Informations complementaires</legend>
+                <div class="form-group col-md-12">
                     {{render_field(form.pachalik)}}
                 </div>
-                <div class="form-group">
+                <div class="form-group col-md-12 ">
                     {{render_field(form.aal)}}
                 </div>
-                <div class="form-group">
+                <div class="form-group col-md-12">
                     {{render_field(form.residance)}}
                 </div>
-                <div class="form-group" id="employe" >
+                <div class="form-group col-md-12" id="employe" >
                     {{render_field(form.employe)}}
                 </div>
                 <div class="si-employe-province" style="display:none;">
-                <div class="form-group">
+                <div class="form-group col-md-12">
                     {{render_field(form.id_societe)}}
                 </div>
-                 <div class="form-group">
+                 <div class="form-group col-md-12">
                     {{render_field(form.nom_societe)}}
                 </div>
                 </div>
-                <div class="form-group input-group date">
-                    {{render_field(form.date)}}
-                </div>
-                <div class="form-group input-group date">
+                <div class="form-group col-md-12">
                     {{render_field(form.observation)}}
                 </div>
 

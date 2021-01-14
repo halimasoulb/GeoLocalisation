@@ -45,10 +45,8 @@ class RegistrationForm(FlaskForm):
     def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         with open('config.js') as json_file:
-            data = json.load(json_file)
-            #for p in data["pachalik1"]: 
-            self.pachalik.choices = [(i, i["pachalik1"]) for i in data["liste"]]
-                #self.aal.choices = p
+            data = json.loads(json_file.read()) 
+            self.pachalik.choices = [(i, i["name"]) for i in data["liste"]]
 
 
 
