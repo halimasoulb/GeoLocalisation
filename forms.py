@@ -6,6 +6,7 @@ import enum
 from sqlalchemy import Enum
 from wtforms import ValidationError
 from models import User
+import json
 
 
 
@@ -17,7 +18,7 @@ class RegistrationForm(FlaskForm):
 
     sexe = SelectField('Sexe', choices=[('1', 'Homme'), ('2', 'Femme')], validators=[ DataRequired()])
     
-    date_de_naissance = DateTimeField("Date de naissance", id='datePicker', format="%m/%d/%Y")
+    date_de_naissance = DateTimeField("Date de naissance", format="%m/%d/%Y")
 
     cin = StringField('CIN', validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "AB123456"})
 
@@ -25,22 +26,35 @@ class RegistrationForm(FlaskForm):
 
     adresse = TextField('Adresse',validators=[DataRequired(), Length(min=3, max=100)], render_kw={"placeholder": "CENTRE BOUSKOURA PRES DYAR AYOUB"})
 
-    residance = RadioField('Residant province', choices=[('1', 'oui'),('2', 'non')])
+    residance = SelectField('Residant province', choices=[('1', 'oui'),('2', 'non')])
 
-    employe = RadioField('Employe province', choices=[('1', 'oui'),('2', 'non')])
+    employe = SelectField('Employe province', choices=[('1', 'oui'),('2', 'non')])
 
     id_societe = StringField('ID Societe', validators=[DataRequired(), Length(min=3, max=100)])
 
     nom_societe = StringField('Nom Societe',  validators=[DataRequired(), Length(min=3, max=100)])
 
+    aal =  SelectField('AAL', choices=[], validators=[ DataRequired()])
+
+    pachalik =  SelectField('PACHALIK', choices=[], validators=[ DataRequired()])
+
     observation = TextAreaField("Observation", render_kw={"placeholder": "Est sortie de l'hopital le 12/05/2020 mais toujours positive covid-19"} )
    
     submit = SubmitField('Enregistrer')
 
+    def __init__(self, *args, **kwargs):
+        super(RegistrationForm, self).__init__(*args, **kwargs)
+        with open('config.js') as json_file:
+            data = json.load(json_file)
+            #for p in data["pachalik1"]: 
+            self.pachalik.choices = [(i, i["pachalik1"]) for i in data["liste"]]
+                #self.aal.choices = p
+
+
 
 class ChangeStatus(FlaskForm):
 
-    cin = StringField('CIN', validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "xxxxxxxx"})
+    cin = StringField('CIN', validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "AB123456"})
     
     status = SelectField('Etat malade', choices=[], validators=[ DataRequired()])  
 
@@ -48,7 +62,7 @@ class ChangeStatus(FlaskForm):
 
     date_guerison = DateTimeField("Date guerison", id='datePicker', format="%m/%d/%Y")
 
-    lieu_hospitalisation = TextField('Lieu Hospitalisation',validators=[DataRequired(), Length(min=3, max=100)])
+    lieu_hospitalisation = TextField('Lieu Hospitalisation',validators=[DataRequired(), Length(min=3, max=100)], render_kw={"placeholder": "HOPITAL SEKKAT PREFECTURE D'ARRONDISSEMENT AIN CHOCK"})
 
     date_deces = DateTimeField("Date deces", id='datePicker', format="%m/%d/%Y")
 
@@ -57,6 +71,8 @@ class ChangeStatus(FlaskForm):
     def __init__(self, states, *args, **kwargs):
         super(ChangeStatus, self).__init__(*args, **kwargs)
         self.status.choices = states
+        
+
 
 
 class LoginForm(FlaskForm):

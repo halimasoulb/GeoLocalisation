@@ -1,2 +1,2 @@
-from .models import Case
-from .models import User
+from .models import Case, User
+

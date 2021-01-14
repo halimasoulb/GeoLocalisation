@@ -51,23 +51,29 @@
                 <div class="form-group" id="sec1">
                     {{render_field(form.prenom)}}  
                 </div>
-                <div class="form-group" id="sec2">
+                <div class="form-group" >
                     {{render_field(form.sexe)}}  
                 </div>
-                <div class="form-group" id="sec2">
+                <div class="form-group" >
                     {{render_field(form.cin)}}
                 </div>
-                <div class="form-group input-group date" id="sec3">
+                <div class="form-group input-group date">
                     {{render_field(form.date_de_naissance)}}
                 </div>
-                <div class="form-group" id="sec3">
+                <div class="form-group">
                     {{render_field(form.adresse)}}
                 </div>
                 <div class="form-group">
-                    {{render_radio(form.residance)}}
+                    {{render_field(form.pachalik)}}
+                </div>
+                <div class="form-group">
+                    {{render_field(form.aal)}}
+                </div>
+                <div class="form-group">
+                    {{render_field(form.residance)}}
                 </div>
                 <div class="form-group" id="employe" >
-                    {{render_radio(form.employe)}}
+                    {{render_field(form.employe)}}
                 </div>
                 <div class="si-employe-province" style="display:none;">
                 <div class="form-group">
