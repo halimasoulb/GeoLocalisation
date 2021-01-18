@@ -1,5 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $(function () {
+                $('#datepick1').datetimepicker();
+                $('#datepick2').datetimepicker();
+                $('#datepick3').datetimepicker();
+            })
+
+    })
+
+</script>
  <div class="register-section box" >
         <form method="POST" action="">
             {{ form.hidden_tag() }}

@@ -2,16 +2,39 @@
 {% block content %}
     <script>
         $(document).ready(function () {
+            
+            $('#employe').change(function(){
+                var selected =  $(this).children('option:selected').text();
+
+                if(selected == "oui"){
+                    $("#si-employe-province").show('slow');
+                }
+                if(selected == "non"){
+                    $("#si-employe-province").hide('slow');
+                }
+            });
+
             $(function () {
-                $('#datePicker').datetimepicker();
-                $('.datepicker').datepicker();
+                 $('#datePicker').datetimepicker({
+                    altField: "#datepick",
+                    closeText: 'Fermer',
+                    prevText: 'Précédent',
+                    nextText: 'Suivant',
+                    currentText: 'Aujourd\'hui',
+                    monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+                    monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
+                    dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
+                    dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
+                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
+                    weekHeader: 'Sem.',
+                    dateFormat: 'yy-mm-dd'
+                });
+
             })
 
             $(function () {
-                var e = document.getElementById("employe");
-                var cl = e.options[e.selectedIndex].value;
-                console.log(cl);
-                
+                $('#datePicker').datetimepicker();
+                $('#datepick').datetimepicker();
             })
 
             if (navigator.geolocation) {
@@ -35,27 +58,33 @@
             else {
                 alert("Geolocation is not supported by this browser.");
             }
+
+
+            $("#pachalik").change(function(){
+                $.ajax({
+                    url: '/selectform',
+                    type: 'POST',
+                    data: $('#aal').serialize(),
+                    success: function(selectOptions){
+                        for (var i = 0; i < selectOptions.length; i++){
+                            $("#aal").append(
+                                $("<option></option>").attr("value", selectOptions[i][0]).text(selectOptions[i][1])
+                                );
+                        }
+                    }
+                });
+            });
         })
         
-        $('#employe').click(function(){
-            var e = document.getElementById("employe");
-            var cl = e.options[e.selectedIndex].value;
-            console.log(cl);
-            if(cl =="non"){
-                $(".si-employe-province").hide('slow');
-            }
-            if(cl =="oui"){
-                $(".si-employe-province").show('slow');
-            }
-        });
-        $('#employe').trigger('click');
+        
+        
     </script>
     <div class="register-section box" >
         <form method="POST" action="">
             {{ form.hidden_tag() }}
             {% from "_formhelpers.html" import render_field, render_radio %}
             <fieldset class="form-group">
-                <legend class="border border-primary mb-4 col-md-12">Enregistrer Nouveaux Cas</legend>
+                <legend class="border-bottom mb-4 col-md-12">Enregistrer Nouveaux Cas</legend>
                 <div class="form-group col-md-6" >
                     {{render_field(form.nom)}}
                 </div>
@@ -68,7 +97,7 @@
                 <div class="form-group col-md-6" >
                     {{render_field(form.cin)}}
                 </div>
-                <div class="form-group col-md-4" data-provide="datepicker">
+                <div class="form-group  datepicker col-md-4" data-provide="datepicker">
                     {{render_field(form.date_de_naissance)}}
                 </div>
                 <div class="form-group col-md-8">
@@ -77,11 +106,11 @@
                 <div class="form-group col-md-12">
                     {{render_field(form.date)}}
                 </div>
-                <legend class="border border-secondary mb-4 col-md-12">Informations complementaires</legend>
-                <div class="form-group col-md-12">
+                <legend class="border-bottom mb-4 col-md-12">Informations complementaires</legend>
+                <div class="form-group col-md-12" id="pachalik">
                     {{render_field(form.pachalik)}}
                 </div>
-                <div class="form-group col-md-12 ">
+                <div class="form-group col-md-12" id="aal">
                     {{render_field(form.aal)}}
                 </div>
                 <div class="form-group col-md-12">
@@ -90,13 +119,11 @@
                 <div class="form-group col-md-12" id="employe" >
                     {{render_field(form.employe)}}
                 </div>
-                <div class="si-employe-province" style="display:none;">
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-6" id="si-employe-province">
                     {{render_field(form.id_societe)}}
                 </div>
-                 <div class="form-group col-md-12">
+                 <div class="form-group col-md-6" id="si-employe-province">
                     {{render_field(form.nom_societe)}}
-                </div>
                 </div>
                 <div class="form-group col-md-12">
                     {{render_field(form.observation)}}

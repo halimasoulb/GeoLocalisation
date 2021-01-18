@@ -2,7 +2,7 @@ from datetime import datetime
 import enum, json
 from threading import Condition
 
-from flask import Flask, render_template, url_for, flash, redirect, request, Blueprint, g
+from flask import Flask, render_template, url_for, flash, redirect, request, Blueprint, g, make_response
 from forms import RegistrationForm, LoginForm, RegisterForm
 from forms import ChangeStatus
 
@@ -15,6 +15,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, JSON, Enum, create_engine
 from sqlalchemy.orm import sessionmaker
 from models import Case, User
+
 
 Base = declarative_base()
 
@@ -89,6 +90,24 @@ class Covid19Monitor(object):
                 flash(f'Un nouveau utilisateur est enregistre', 'success')
                 return redirect(url_for('login'))
             return render_template('adduser.html', form=form)
+
+        @app.route('/selectform', methods=['GET'])
+        def select():
+            form = RegistrationForm()   
+            return render_template_string(template, form=form)
+
+        @app.route('/selectform', methods=['POST'])
+        def updateselect():
+            #aal = type(request.form.get('pachalik'))
+            with open('config.js') as json_file:
+                data = json.loads(json_file.read()) 
+                liste = [(d, d["name"]) for d in data["liste"]]
+                for d in data["liste"]:
+                    choices = [{field : liste[i][field] for field in ['name']} \
+                    for i in ["aal"] if i in liste]
+                    response = make_response(json.dumps(choices))
+                    response.content_type = 'application/jsons'
+            return response
 
         @app.route("/register", methods=['GET', 'POST'])
         def register():
