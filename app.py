@@ -3,7 +3,7 @@ import enum, json
 from threading import Condition
 
 from flask import Flask, render_template, url_for, flash, redirect, request, Blueprint, g, make_response
-from forms import RegistrationForm, LoginForm, RegisterForm
+from forms import RegistrationForm, LoginForm
 from forms import ChangeStatus
 
 from werkzeug.security import check_password_hash, generate_password_hash
@@ -67,29 +67,16 @@ class Covid19Monitor(object):
                 if user is not None and user.verify_password(form.password.data):
                     login_user(user)
                     redirect(url_for('home'))
-                    flash(f"Le fonctionnaire est connecte", "success")
+                    flash(f"Vous etes connecte", "success")
                     return redirect(url_for('home'))
+                else:
+                    flash(u'Email ou mot de passe incorrect', 'error')
             return render_template('login.html', form=form)
 
         @app.route('/logout')
         def logout():
             logout_user()
             return redirect(url_for('home'))
-
-      
-
-        @app.route('/adduser', methods=["GET", "POST"])
-        def adduser():
-            form = RegisterForm()
-            if form.validate():
-                new_user = User(email=form.email.data, password=form.password.data)
-                self.session.add(new_user)
-                self.session.commit()
-                self.session.close()
-                redirect(url_for('login'))
-                flash(f'Un nouveau utilisateur est enregistre', 'success')
-                return redirect(url_for('login'))
-            return render_template('adduser.html', form=form)
 
         @app.route('/selectform', methods=['GET'])
         def select():

@@ -90,7 +90,7 @@ class LoginForm(FlaskForm):
         super(LoginForm, self).__init__(*args, **kwargs)
 
 
-class RegisterForm(FlaskForm):
+"""class RegisterForm(FlaskForm):
     
     email = TextField('Email',
             validators=[DataRequired(), Email(), Length(min=6, max=40)], render_kw={"placeholder": "admin@gmail.com"})
@@ -101,4 +101,4 @@ class RegisterForm(FlaskForm):
     submit = SubmitField('Enregistrer')
 
     def __init__(self, *args, **kwargs):
-        super(RegisterForm, self).__init__(*args, **kwargs)
+        super(RegisterForm, self).__init__(*args, **kwargs)"""

@@ -36,8 +36,7 @@
             <a class="nav-item nav-link" style="text-align:right" href="{{ url_for('update') }}">MODIFIER</a>
             <a class="nav-item nav-link" style="text-align:right" href="{{ url_for('monitor') }}">VISUALISER</a>
             {% else %}
-            <a class="nav-item nav-link"  style="text-align:right" href="{{ url_for('login') }}">SE CONNECTER</a><br>
-            <a class="nav-item nav-link" style="text-align:right" href="{{ url_for('adduser') }}">S'ENREGISTRER</a><br>
+            <a class="nav-item nav-link" style="text-align:right" href="{{ url_for('login') }}">SE CONNECTER</a><br>
             {% endif %}
              </div>
           </div>
@@ -50,7 +49,7 @@
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
               {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
                   {{ message }}
                 </div>
               {% endfor %}

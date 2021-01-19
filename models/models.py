@@ -18,34 +18,6 @@ class Case(Base):
         LOADING = "En cours"
         CONFINED = "Confine"
 
- 
-    """class Pachalik(enum.Enum):
-        BOUSKOURA = "Bouskoura"
-        DARBOUAZZA = "Dar Bouazza"
-        NOUACEUR = "Nouaceur"
-        OULEDSALEH = "Ouled Saleh"
-        OULEDAZZOUZ = "Ouled Azzouz"
-
-    class Aal(enum.Enum):
-        aal1 = "Bouskoura"
-        aal2 = "Rmel lehal"
-        aal3 = "Ville verte"
-
-        aal4 = "Dar Bouazza"
-        aal5 = "Errahma2"
-        aal6 = "Ben Abid"
-        aal7 = "Errahma1"
-        aal8 = "Ouled Ahmed1"
-        aal9 = "Ouled Ahmed2"
-
-        aal10 = "Nouaceur"
-        aal11 = "Zaouia"
-
-        aal12 = "Ouled Saleh"
-        aal13 = "Ennasr"
-        aal14 = "Ouled Azzouz" 
-        aal15= "Essaada" """
-
     id = Column('id', Integer, primary_key = True) 
     nom = Column(String(50))  
     prenom= Column(String(50))
