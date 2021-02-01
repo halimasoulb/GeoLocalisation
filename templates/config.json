@@ -1,0 +1,107 @@
+[
+   {
+      "id": 1,
+      "name": "BOUSKOURA",
+      "parent_id": 0
+   },
+   {
+      "id": 2,
+      "name": "DAR BOUAZZA",
+      "parent_id": 0
+   },
+   {
+      "id": 3,
+      "name": "NOUACEUR",
+      "parent_id": 0
+   },
+   {
+      "id": 4,
+      "name": "OULED SALEH",
+      "parent_id": 0
+   },
+   {
+      "id": 5,
+      "name": "OULED AZZOUZ",
+      "parent_id": 0
+   },
+   {
+      "id": 6,
+      "name": "Bouskoura",
+      "parent_id": 1
+   },
+   {
+      "id": 7,
+      "name": "Rmel lehal",
+      "parent_id": 1
+   },
+   {
+      "id": 8,
+      "name": "Ville verte",
+      "parent_id": 1
+   },
+   {
+      "id": 9,
+      "name": "Lemkansa",
+      "parent_id": 1
+   },
+   {
+      "id": 9,
+      "name": "Dar Bouazza",
+      "parent_id": 2
+   },
+   {
+      "id": 10,
+      "name": "Errahma2",
+      "parent_id": 2
+   },
+   {
+      "id": 11,
+      "name": "Ben Abid",
+      "parent_id": 2
+   },
+   {
+      "id": 12,
+      "name": "Errahma1",
+      "parent_id": 2
+   },
+   {
+      "id": 13,
+      "name": "Ouled Ahmed1",
+      "parent_id": 2
+   },
+   {
+      "id": 14,
+      "name": "Ouled Ahmed2",
+      "parent_id": 2
+   },
+   {
+      "id": 15,
+      "name": "Nouaceur",
+      "parent_id": 3
+   },
+   {
+      "id": 16,
+      "name": "Zaouia",
+      "parent_id": 3
+   },
+   {
+      "id": 17,
+      "name": "Ouled Saleh",
+      "parent_id": 4
+   },
+   {
+      "id": 18,
+      "name": "Ennasr",
+      "parent_id": 4
+   },
+   {
+      "id": 19,
+      "name": "Ouled Azzouz",
+      "parent_id": 5
+   },
+   {
+      "id": 20,
+      "name": "Essaada",
+      "parent_id": 5
+   }
+]

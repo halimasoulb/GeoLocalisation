@@ -1,12 +1,14 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, DateTimeField, SubmitField, SelectField, BooleanField, PasswordField, SubmitField, TextField, RadioField, TextAreaField, DateField
+from wtforms import StringField, DateTimeField, SubmitField, SelectField, BooleanField, PasswordField, SubmitField, TextField, RadioField, TextAreaField, DateField, validators
 from wtforms.validators import DataRequired, Length, Email, EqualTo, Regexp
+from wtforms.fields.html5 import DateTimeLocalField
 from datetime import datetime
 import enum
 from sqlalchemy import Enum
 from wtforms import ValidationError
 from models import User
 import json
+
 
 
 
@@ -19,11 +21,11 @@ class RegistrationForm(FlaskForm):
 
     sexe = SelectField('Sexe', choices=[('1', 'Homme'), ('2', 'Femme')], validators=[ DataRequired()])
     
-    date_de_naissance = DateField("Date de naissance", id='datepick', validators=[ DataRequired()], format="%m/%d/%Y")
+    date_de_naissance = DateTimeLocalField("Date de naissance", validators=[ DataRequired()],  format='%Y-%m-%dT%H:%M')
 
     cin = StringField('CIN', validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "AB123456"})
 
-    date = DateTimeField("Date Declaration", id='datePicker', format="%m/%d/%Y h:mm a")
+    date = DateTimeLocalField("Date Declaration", validators=[ DataRequired()], format='%Y-%m-%dT%H:%M' )
 
     adresse = TextField('Adresse',validators=[DataRequired(), Length(min=3, max=100)], render_kw={"placeholder": "CENTRE BOUSKOURA PRES DYAR AYOUB"})
 
@@ -31,27 +33,25 @@ class RegistrationForm(FlaskForm):
 
     employe = SelectField('Employe province', choices=[('1', 'oui'),('2', 'non')])
 
-    id_societe = StringField('ID Societe', validators=[Length(min=3, max=100)])
+    id_societe = StringField('ID Societe', validators=[validators.Optional()])
 
-    nom_societe = StringField('Nom Societe',  validators=[Length(min=3, max=100)])
+    nom_societe = StringField('Nom Societe', validators=[validators.Optional()])
 
     aal =  SelectField('AAL', choices=[])
 
-    pachalik =  SelectField('PACHALIK', choices=[], validators=[ DataRequired()])
+    pachalik =  SelectField('PACHALIK', choices=[])
 
     observation = TextAreaField("Observation", render_kw={"placeholder": "Est sortie de l'hopital le 12/05/2020 mais toujours positive covid-19"} )
    
     submit = SubmitField('Enregistrer')
 
-    def __init__(self, *args, **kwargs):
+    """def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
-        with open('config.js') as json_file:
-            data = json.loads(json_file.read()) 
-            self.pachalik.choices = [(i, i["name"]) for i in data["liste"]]
-            #liste = [(d, d["name"]) for d in data["liste"]]
-            #for d in data["liste"]:
-                #self.aal.choices = [{field : liste[i][field] for field in ['name']} \
-                #for i in ["aal"] if i in liste]
+        with open('config.json') as json_file:
+            data = json.loads(json_file.read())
+            for d in data: 
+                if d["parent_id"] == 0:
+                    self.pachalik.choices = [(i, i[1]) for i in d]"""
 
 
 
@@ -61,13 +61,13 @@ class ChangeStatus(FlaskForm):
     
     status = SelectField('Etat malade', choices=[], validators=[ DataRequired()])  
 
-    date_hospitalisation = DateTimeField("Date Hospitalisation", id='datepick1', format="MM/dd/yyyy")
+    date_hospitalisation = DateTimeLocalField("Date Hospitalisation", format='%Y-%m-%dT%H:%M',  validators=[validators.Optional()])
 
-    date_guerison = DateTimeField("Date guerison", id='datepick2', format="%m/%d/%Y")
+    date_guerison = DateTimeLocalField("Date guerison", format='%Y-%m-%dT%H:%M',  validators=[validators.Optional()])
 
-    lieu_hospitalisation = TextField('Lieu Hospitalisation',validators=[DataRequired(), Length(min=3, max=100)], render_kw={"placeholder": "HOPITAL SEKKAT PREFECTURE D'ARRONDISSEMENT AIN CHOCK"})
+    lieu_hospitalisation = TextField('Lieu Hospitalisation', validators=[validators.Optional()], render_kw={"placeholder": "HOPITAL SEKKAT PREFECTURE D'ARRONDISSEMENT AIN CHOCK"})
 
-    date_deces = DateTimeField("Date deces", id='datepick3', format="%m/%d/%Y")
+    date_deces = DateTimeLocalField("Date deces", validators=[validators.Optional()], format='%Y-%m-%dT%H:%M')
 
     submit = SubmitField('Modifier')
 
@@ -90,15 +90,4 @@ class LoginForm(FlaskForm):
         super(LoginForm, self).__init__(*args, **kwargs)
 
 
-"""class RegisterForm(FlaskForm):
-    
-    email = TextField('Email',
-            validators=[DataRequired(), Email(), Length(min=6, max=40)], render_kw={"placeholder": "admin@gmail.com"})
-    password = PasswordField('Mot de passe',
-            validators=[DataRequired(), Length(min=8, max=20)], render_kw={"placeholder": "xxxxxxxx"})
-    confirm = PasswordField('Verifier mot de passe',
-            validators=[DataRequired(), EqualTo('password', message='mot de passe doit correspondre')], render_kw={"placeholder": "xxxxxxxx"})
-    submit = SubmitField('Enregistrer')
 
-    def __init__(self, *args, **kwargs):
-        super(RegisterForm, self).__init__(*args, **kwargs)"""

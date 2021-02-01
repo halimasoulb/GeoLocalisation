@@ -2,9 +2,11 @@ from datetime import datetime
 import enum, json
 from threading import Condition
 
-from flask import Flask, render_template, url_for, flash, redirect, request, Blueprint, g, make_response
+from flask import Flask, render_template, url_for, flash, redirect, request, Blueprint, g, make_response,  jsonify 
 from forms import RegistrationForm, LoginForm
 from forms import ChangeStatus
+import geocoder
+from geopy.geocoders import Nominatim
 
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin, LoginManager, current_user, login_required, login_user, logout_user
@@ -14,28 +16,68 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, JSON, Enum, create_engine
 from sqlalchemy.orm import sessionmaker
-from models import Case, User
+from models import Case, User, Pachalik, Aal
+import datetime
+
+from configparser import ConfigParser
 
 
 Base = declarative_base()
 
 class Covid19Monitor(object):
+
     def __init__(self):
         self.cv = Condition()
         self.app = Flask(__name__)
         self.app.config['GOOGLEMAPS_KEY'] = "AIzaSyDcA0xJAaREE2vCdgjDnE-j9HQDChCvmWg"
         GoogleMaps(self.app)
+        self.geolocator = Nominatim(user_agent="example app")
         self.login_manager = LoginManager(self.app)
         #engine = create_engine('postgres://btdopsdlodkkkc:f2831c4692e5f0eedaa5769a343800697f23b11c339ee02629a13b8eff2e3503@ec2-3-218-123-191.compute-1.amazonaws.com:5432/dd9eehcgrnmn9m', echo=False)
         engine = create_engine('sqlite:///cas.db')
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
-        
+        #config = ConfigParser()
+        #config.read('config.ini')
+        #self.session = config['database']['Session']
+        #self.app = config['flask']
         self.app.config['DEBUG'] = True
         self.app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
         self.position = {'latitude': 0, 'longitude': 0}
         self.locations = []
+
+        """with open('config.json') as json_file:
+            pachaliks = json.loads(json_file.read())
+            all_pachaliks = []
+            for pachalik in pachaliks:
+                if pachalik["parent_id"] == 0:
+                    new_pachalik = Pachalik(id=pachalik["id"], name=pachalik["name"])
+                    all_pachaliks.append(new_pachalik)   
+            self.session.add_all(all_pachaliks)
+            
+
+        with open('config.json') as json_file:
+            aals  = json.loads(json_file.read())
+            all_aals = []
+            for aal in aals:
+                if aal["parent_id"] > 0:
+                    new_aal = Aal(name=aal["name"], pachalik_id=aal["parent_id"])
+                    all_aals.append(new_aal)
+            self.session.add_all(all_aals)
+            self.session.commit()
+
+
+        with open('users.js') as json_file:
+            users = json.loads(json_file.read())
+            all_users = []
+            for user in users:
+                new_entry = User(id=user["id"], email=user["email"], password=user["password"])
+                all_users.append(new_entry)
+            self.session.add_all(all_users)
+            self.session.commit()"""
+             
+        
 
 
     def create(self, host=None, port=None, debug=None, load_dotenv=True, **options):
@@ -70,7 +112,7 @@ class Covid19Monitor(object):
                     flash(f"Vous etes connecte", "success")
                     return redirect(url_for('home'))
                 else:
-                    flash(u'Email ou mot de passe incorrect', 'error')
+                    flash(f'Email ou mot de passe incorrect', 'success')
             return render_template('login.html', form=form)
 
         @app.route('/logout')
@@ -78,51 +120,60 @@ class Covid19Monitor(object):
             logout_user()
             return redirect(url_for('home'))
 
-        @app.route('/selectform', methods=['GET'])
-        def select():
-            form = RegistrationForm()   
-            return render_template_string(template, form=form)
+        @app.route('/register')
+        def getPachalik():
+            form = RegistrationForm()
+            form.pachalik.choices = [(pachalik.id, pachalik.name) for pachalik in self.session.query(Pachalik).all()]
 
-        @app.route('/selectform', methods=['POST'])
-        def updateselect():
-            #aal = type(request.form.get('pachalik'))
-            with open('config.js') as json_file:
-                data = json.loads(json_file.read()) 
-                liste = [(d, d["name"]) for d in data["liste"]]
-                for d in data["liste"]:
-                    choices = [{field : liste[i][field] for field in ['name']} \
-                    for i in ["aal"] if i in liste]
-                    response = make_response(json.dumps(choices))
-                    response.content_type = 'application/jsons'
-            return response
+            if request.method == 'POST':
+                aal = self.session.query(Aal).filter_by(id=form.aal.data).first()
+                pachalik = self.session.query(Pachalik).filter_by(id=form.pachalik.data).first()
+                return '<h1>Pachalik : {}, Aal: {}</h1>'.format(pachalik.name, aal.name)
 
+            return render_template('register.html', form=form)
+
+        @app.route('/aal/<get_aal>')
+        def aalbypachalik(get_aal):
+            aals = self.session.query(Aal).filter_by(pachalik_id=get_aal).all()
+            aalArray = []
+            for aal in aals:
+                aalObj = {}
+                aalObj['id'] = aal.id
+                aalObj['name'] = aal.name
+                aalArray.append(aalObj)
+                print(aalArray)
+            return jsonify({'aalpachalik' : aalArray})
+
+        
         @app.route("/register", methods=['GET', 'POST'])
         def register():
             form = RegistrationForm()
             if request.method == "POST" and form.validate():
                 cases = self.session.query(Case).filter_by(cin=form.cin.data).all()
-                if len(cases) > 1:
-                    flash(u'Le patient portant ce cin existe deja', 'error')
+                if len(cases) >= 1:
+                    flash(f'Le patient portant ce cin existe deja', 'success')
                     return redirect(url_for('home'))
                 else:
                     prenom = form.prenom.data
                     nom = form.nom.data
                     cin = form.cin.data
-                    date = form.date.data
-                    sexe = form.sexe.data
+                    date = form.date.data.strftime("%d/%m/%Y")
+                    sexe = dict(form.sexe.choices).get(form.sexe.data)
                     today = datetime.date.today()
                     date_de_naissance = form.date_de_naissance.data
                     age  = today.year - date_de_naissance.year - ((today.month, today.day) < (date_de_naissance.month, date_de_naissance.day))
                     adresse = form.adresse.data
-                    residance = form.residance.data
-                    employe = form.employe.data
+                    residance = dict(form.residance.choices).get(form.residance.data)
+                    employe = dict(form.employe.choices).get(form.employe.data)
                     id_societe = form.id_societe.data
                     nom_societe = form.nom_societe.data
                     observation = form.observation.data
-                    pachalik = form.pachalik.data
-                    aal = form.aal.data
-                    cas = Case(nom=nom, prenom=prenom,cin=cin, type=Case.Type.NEW.value, position=position, date_de_naissance=date_de_naissance, 
-                        age=age, date=date, sexe=sexe, adresse=adresse, residance=residance, employe=employe, id_societe=id_societe, nom_societe=nom_societe, observation=observation, pachalik=pachalik, aal=aal)
+                    pachalik = dict(form.pachalik.choices).get(form.pachalik.data)
+                    aal = dict(form.pachalik.choices).get(form.pachalik.data)
+                    x = self.geolocator.geocode(adresse).point.latitude
+                    y = self.geolocator.geocode(adresse).point.longitude
+                    cas = Case(nom=nom, prenom=prenom,cin=cin, type=Case.Type.NEW.value,
+                        age=age, date_de_declaration=date, sexe=sexe, adresse=adresse, residance=residance, employe=employe, id_societe=id_societe, nom_societe=nom_societe, observation=observation, pachalik=pachalik, aal=aal, x=x, y=y, date_guerison=None, date_hospitalisation=None, lieu_hospitalisation=None, date_deces=None)
                     self.session.add(cas)
                     self.session.commit()
                     self.session.close()
@@ -137,19 +188,33 @@ class Covid19Monitor(object):
             if request.method == 'POST' and form.validate():
                 cases = self.session.query(Case).filter_by(cin=form.cin.data).all()
                 if len(cases) == 0:
-                    flash(u"Le patient avec cin = "+form.cin.data+" n'est pas enregistre", "error")
+                    flash(f"Le patient avec cin = "+form.cin.data+" n'est pas enregistre", "success")
                 elif len(cases) == 1:
-                    self.session.query(Case).filter(Case.cin == form.cin.data).update({Case.type: form.status.data}, synchronize_session=False)
+                    status = form.status.data
+                    date_guerison = form.date_guerison.data
+                    date_hospitalisation = form.date_hospitalisation.data
+                    date_deces = form.date_deces.data
+                    lieu_hospitalisation = form.lieu_hospitalisation.data
+                    self.session.query(Case).filter(Case.cin == form.cin.data).update({Case.type: status, Case.date_guerison: date_guerison, Case.date_hospitalisation :date_hospitalisation, Case.date_deces:date_deces, Case.lieu_hospitalisation: lieu_hospitalisation }, synchronize_session=False)
                     self.session.commit()
                     redirect(url_for('home'))
                     flash(f"L'etat du malade " + cases[0].nom + " " + cases[0].prenom + " a ete modifie", "success")
                     return redirect(url_for('home'))
                 else:
-                    flash(u"Le patient avec cin = "+form.cin.data+" est enregistre " +str(len(cases)) + " fois", "error")
-
+                    flash(f"Le patient avec cin = "+form.cin.data+" est enregistre " +str(len(cases)) + " fois", "success")
 
             return render_template('update.html', title='Update', form=form)
-                
+
+
+        @app.route('/pachalik',  methods = ['GET','POST'])
+        def pachalik():
+            form = RegistrationForm()
+            with open('config.json') as json_file:
+                pachaliks = json.loads(json_file.read())
+                print(json.dumps(pachaliks))
+            return json.dumps(pachaliks)
+
+       
 
         @app.route('/position', methods = ['POST'])
         def position():

@@ -2,6 +2,7 @@
 {% block content %}
 
  <div class="cases-container">
+  <legend class="border-bottom mb-4 col-md-12">Recensement des cas Covid 19 au Maroc </legend>
     <div class="case-box">
      <p class="case-number"> {{new}} </p> <p class="case-type">confirmés</p>
     </div>
@@ -12,10 +13,10 @@
       <p class="case-number">  {{dead}} </p> <p class="case-type">morts</p>
     </div>
     <div class="case-box"> 
-      <p class="case-number"> {{hosp}} </p> <p class="case-type">hospitalises</p>
+      <p class="case-number"> {{hosp}} </p> <p class="case-type">hospitalisés</p>
     </div>
-    <div class="case-box"> 
-      <p class="case-number"> {{conf}} </p> <p class="case-type">confines</p>
-    </div>
+    <!-- div class="case-box"> 
+      <p class="case-number"> {{conf}} </p> <p class="case-type">confinés</p>
+    </div -->
 </div>
 {% endblock content %}

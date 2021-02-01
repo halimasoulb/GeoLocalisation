@@ -1,2 +1,2 @@
-from .models import Case, User
+from .models import Case, User, Pachalik, Aal
 

@@ -1,10 +1,36 @@
 {% extends "layout.html" %}
 {% block content %}
     <script>
+
+         
         $(document).ready(function () {
-            
-            $('#employe').change(function(){
-                var selected =  $(this).children('option:selected').text();
+
+
+            select_employe = document.getElementById('employe').querySelector('#employe');
+            select_pachalik = document.getElementById('pachalik').querySelector("#pachalik");
+            console.log(select_pachalik);
+            select_aal = document.getElementById('aal').querySelector("#aal");
+
+            select_pachalik.onchange = function(){
+
+                pachalik = select_pachalik.options[select_pachalik.selectedIndex].value;
+                console.log(pachalik);
+
+                fetch('aal/' + pachalik).then(function(response){
+                    response.json().then(function(data) {
+                        optionHTML = document.getElementById('aal').querySelector("#aal"); 
+                        for (aal of data.aalpachalik) {
+                            console.log(aal);
+
+                            optionHTML += optionHTML.insertAdjacentHTML('beforeend', "<option value="+aal.id+">"+aal.name+"</option>");
+                        }
+                        optionHTML.innerHTML = optionHTML;
+                    });
+                });
+            }
+
+              select_employe.onchange = function(){
+                var selected =  select_employe.options[select_employe.selectedIndex].text;
 
                 if(selected == "oui"){
                     $("#si-employe-province").show('slow');
@@ -12,31 +38,8 @@
                 if(selected == "non"){
                     $("#si-employe-province").hide('slow');
                 }
-            });
-
-            $(function () {
-                 $('#datePicker').datetimepicker({
-                    altField: "#datepick",
-                    closeText: 'Fermer',
-                    prevText: 'Précédent',
-                    nextText: 'Suivant',
-                    currentText: 'Aujourd\'hui',
-                    monthNames: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
-                    monthNamesShort: ['Janv.', 'Févr.', 'Mars', 'Avril', 'Mai', 'Juin', 'Juil.', 'Août', 'Sept.', 'Oct.', 'Nov.', 'Déc.'],
-                    dayNames: ['Dimanche', 'Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi'],
-                    dayNamesShort: ['Dim.', 'Lun.', 'Mar.', 'Mer.', 'Jeu.', 'Ven.', 'Sam.'],
-                    dayNamesMin: ['D', 'L', 'M', 'M', 'J', 'V', 'S'],
-                    weekHeader: 'Sem.',
-                    dateFormat: 'yy-mm-dd'
-                });
-
-            })
-
-            $(function () {
-                $('#datePicker').datetimepicker();
-                $('#datepick').datetimepicker();
-            })
-
+            };
+     
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(function(position) {
                     currentPosition = {
@@ -58,31 +61,14 @@
             else {
                 alert("Geolocation is not supported by this browser.");
             }
-
-
-            $("#pachalik").change(function(){
-                $.ajax({
-                    url: '/selectform',
-                    type: 'POST',
-                    data: $('#aal').serialize(),
-                    success: function(selectOptions){
-                        for (var i = 0; i < selectOptions.length; i++){
-                            $("#aal").append(
-                                $("<option></option>").attr("value", selectOptions[i][0]).text(selectOptions[i][1])
-                                );
-                        }
-                    }
-                });
-            });
-        })
-        
-        
+    })
         
     </script>
     <div class="register-section box" >
         <form method="POST" action="">
             {{ form.hidden_tag() }}
             {% from "_formhelpers.html" import render_field, render_radio %}
+            {{ form.csrf_token}} 
             <fieldset class="form-group">
                 <legend class="border-bottom mb-4 col-md-12">Enregistrer Nouveaux Cas</legend>
                 <div class="form-group col-md-6" >
@@ -107,10 +93,10 @@
                     {{render_field(form.date)}}
                 </div>
                 <legend class="border-bottom mb-4 col-md-12">Informations complementaires</legend>
-                <div class="form-group col-md-12" id="pachalik">
+                <div class="form-group col-md-12" name="pachalik" id="pachalik">
                     {{render_field(form.pachalik)}}
-                </div>
-                <div class="form-group col-md-12" id="aal">
+                </div >
+                <div class="form-group col-md-12" id="aal" name="aal">
                     {{render_field(form.aal)}}
                 </div>
                 <div class="form-group col-md-12">
@@ -119,11 +105,13 @@
                 <div class="form-group col-md-12" id="employe" >
                     {{render_field(form.employe)}}
                 </div>
-                <div class="form-group col-md-6" id="si-employe-province">
+                <div id="si-employe-province">
+                <div class="form-group col-md-6">
                     {{render_field(form.id_societe)}}
                 </div>
-                 <div class="form-group col-md-6" id="si-employe-province">
+                 <div class="form-group col-md-6">
                     {{render_field(form.nom_societe)}}
+                </div>
                 </div>
                 <div class="form-group col-md-12">
                     {{render_field(form.observation)}}

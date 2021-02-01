@@ -3,11 +3,47 @@
 <script type="text/javascript">
     $(document).ready(function () {
 
-        $(function () {
-                $('#datepick1').datetimepicker();
-                $('#datepick2').datetimepicker();
-                $('#datepick3').datetimepicker();
-            })
+        select_status = document.getElementById('status').querySelector('#status');
+
+         select_status.onchange=function(){
+                var selected =  select_status.options[select_status.selectedIndex].text;
+
+                if(selected == "Gueri"){
+
+                    $("#si-deces").hide('slow');
+                    $("#si-hosp").hide('slow');
+                    $("#si-gueri").show('slow');
+                }
+                if(selected == "Hospitalise"){
+
+                    $("#si-deces").hide('slow');
+                    $("#si-hosp").show('slow');
+                    $("#si-gueri").hide('slow');
+                }
+                if(selected == "Decede"){
+
+                    $("#si-hosp").hide('slow');
+                    $("#si-deces").show('slow');
+                    $("#si-gueri").hide('slow');
+                }
+                if(selected == "En cours"){
+                    $("#si-gueri").hide('slow');
+                    $("#si-hosp").hide('slow');
+                    $("#si-deces").hide('slow');
+
+                }
+                if(selected == "Confine"){
+                    $("#si-gueri").hide('slow');
+                    $("#si-hosp").hide('slow');
+                    $("#si-deces").hide('slow');
+
+                }
+
+
+            };
+     
+
+      
 
     })
 
@@ -21,19 +57,21 @@
                 <div class="form-group col-md-12" >
                     {{render_field(form.cin)}}
                 </div>
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-12" id="status">
                     {{render_field(form.status)}}  
                 </div>
+                <div id="si-hosp"  style="display: none;">
                 <div class="form-group col-md-4">
                     {{render_field(form.date_hospitalisation)}}
                 </div>
                 <div class="form-group col-md-8">
                     {{render_field(form.lieu_hospitalisation)}}  
                 </div>
-                <div class="form-group col-md-12">
+                </div>
+                <div class="form-group col-md-12" id="si-gueri">
                     {{render_field(form.date_guerison)}}  
                 </div>
-                <div class="form-group col-md-12">
+                <div class="form-group col-md-12" id="si-deces"  style="display: none;">
                     {{render_field(form.date_deces)}}  
                 </div>
             </fieldset>
