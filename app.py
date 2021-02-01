@@ -177,7 +177,7 @@ class Covid19Monitor(object):
             logout_user()
             return redirect(url_for('home'))
 
-        @app.route('/register')
+        """@app.route('/register')
         def getPachalik():
             form = RegistrationForm()
             nbre_pachaliks = self.session.query(Pachalik).count()
@@ -220,7 +220,7 @@ class Covid19Monitor(object):
                 aalObj['name'] = aal.name
                 aalArray.append(aalObj)
                 print(aalArray)
-            return jsonify({'aalpachalik' : aalArray})
+            return jsonify({'aalpachalik' : aalArray})"""
 
         
         @app.route("/register", methods=['GET', 'POST'])

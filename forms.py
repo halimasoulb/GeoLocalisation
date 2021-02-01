@@ -36,9 +36,9 @@ class RegistrationForm(FlaskForm):
 
     nom_societe = StringField('Nom Societe', validators=[validators.Optional()])
 
-    aal =  SelectField('AAL', choices=[])
+    aal =  SelectField('AAL', choices=[('1', 'BOUSKOURA'),('2','NOUACEUR')])
 
-    pachalik =  SelectField('PACHALIK', choices=[])
+    pachalik =  SelectField('PACHALIK', choices=[('1', 'Bouskoura'), ('2', 'Nouaceur')])
 
     observation = TextAreaField("Observation", render_kw={"placeholder": "Est sortie de l'hopital le 12/05/2020 mais toujours positive covid-19"} )
    
