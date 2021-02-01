@@ -6,7 +6,6 @@ from datetime import datetime
 import enum
 from sqlalchemy import Enum
 from wtforms import ValidationError
-from models import User
 import json
 
 

@@ -41,15 +41,20 @@ h1, h2, h3, h4, h5, h6 {
   border-radius: 15px;
 }
 
-.nav-item {
+.nav-item.nav-link {
   font-size: 2.5rem;!important;
   margin-left:15px  !important;
+  
 }
 
 .navbar-brand {
   font-size: 3rem !important;
 }
+.navbar-nav {
+  right: 0;
+  margin-left: 70% !important;
 
+}
 
 .cases-container
 {
@@ -112,3 +117,4 @@ h1, h2, h3, h4, h5, h6 {
 .nav-item{
   text-align: right;
 }
+
