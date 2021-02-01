@@ -17,6 +17,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, JSON, Enum, create_engine
 from sqlalchemy.orm import sessionmaker
 import datetime
+#from waitress import serve
 
 from configparser import ConfigParser
 
@@ -110,8 +111,8 @@ class Covid19Monitor(object):
         GoogleMaps(self.app)
         self.geolocator = Nominatim(user_agent="example app")
         self.login_manager = LoginManager(self.app)
-        #engine = create_engine('postgres://btdopsdlodkkkc:f2831c4692e5f0eedaa5769a343800697f23b11c339ee02629a13b8eff2e3503@ec2-3-218-123-191.compute-1.amazonaws.com:5432/dd9eehcgrnmn9m', echo=False)
-        engine = create_engine('sqlite:///cas.db')
+        engine = create_engine('postgres://jdpjwbacaryvwr:cc7612bc219ab9ef2ab6491d2ca99a77e250ac8140590a26786a06d9a9eb1295@ec2-54-196-1-212.compute-1.amazonaws.com:5432/d77flf5a3j6r0c', echo=False)
+        #engine = create_engine('sqlite:///cas.db')
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
