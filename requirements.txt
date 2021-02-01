@@ -6,4 +6,4 @@ email_validator
 gunicorn
 flask_sqlalchemy 
 psycopg2
-
+geocoder
