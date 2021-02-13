@@ -17,7 +17,7 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, DateTime, JSON, Enum, create_engine
 from sqlalchemy.orm import sessionmaker
 import datetime
-#from waitress import serve
+
 
 from configparser import ConfigParser
 
@@ -42,7 +42,6 @@ class Case(Base):
     cin = Column(String(10))
     age =  Column(String(10))
     type = Column(String(50))
-    #position = Column(JSON())
     date_de_declaration = Column(String(50))
     sexe = Column(String(50))
     adresse = Column(String(100))
@@ -87,20 +86,6 @@ class User(Base, UserMixin):
         return check_password_hash(self.password_hash, password)
 
 
-class Pachalik(Base):
-    __tablename__ = 'Pachalik'
-
-    id = Column('id', Integer, primary_key = True) 
-    name = Column(String(50)) 
-
-class Aal(Base):
-    __tablename__ = 'Aal'
-
-    id = Column('id', Integer, primary_key = True) 
-    name = Column(String(50))
-    pachalik_id =  Column(Integer) 
-
-
 
 class Covid19Monitor(object):
 
@@ -116,10 +101,6 @@ class Covid19Monitor(object):
         Base.metadata.create_all(engine)
         Session = sessionmaker(bind=engine)
         self.session = Session()
-        #config = ConfigParser()
-        #config.read('config.ini')
-        #self.session = config['database']['Session']
-        #self.app = config['flask']
         self.app.config['DEBUG'] = True
         self.app.config['SECRET_KEY'] = '5791628bb0b13ce0c676dfde280ba245'
         self.position = {'latitude': 0, 'longitude': 0}
@@ -177,51 +158,6 @@ class Covid19Monitor(object):
             logout_user()
             return redirect(url_for('home'))
 
-        """@app.route('/register')
-        def getPachalik():
-            form = RegistrationForm()
-            nbre_pachaliks = self.session.query(Pachalik).count()
-            nbre_aals = self.session.query(Aal).count()
-            if nbre_pachaliks==0 and nbre_aals==0:
-                with open('config.json') as json_file:
-                    pachaliks = json.loads(json_file.read())
-                    all_pachaliks = []
-                    for pachalik in pachaliks:
-                        if pachalik["parent_id"] == 0:
-                            new_pachalik = Pachalik(id=pachalik["id"], name=pachalik["name"])
-                            all_pachaliks.append(new_pachalik)   
-                    self.session.add_all(all_pachaliks)
-                with open('config.json') as json_file:
-                    aals  = json.loads(json_file.read())
-                    all_aals = []
-                    for aal in aals:
-                        if aal["parent_id"] > 0:
-                            new_aal = Aal(name=aal["name"], pachalik_id=aal["parent_id"])
-                            all_aals.append(new_aal)
-                    self.session.add_all(all_aals)
-                    self.session.commit()
-            else:
-                form.pachalik.choices = [(pachalik.id, pachalik.name) for pachalik in self.session.query(Pachalik).all()]
-
-                if request.method == 'POST':
-                    aal = self.session.query(Aal).filter_by(id=form.aal.data).first()
-                    pachalik = self.session.query(Pachalik).filter_by(id=form.pachalik.data).first()
-                    return '<h1>Pachalik : {}, Aal: {}</h1>'.format(pachalik.name, aal.name)
-
-            return render_template('register.html', form=form)
-
-        @app.route('/aal/<get_aal>')
-        def aalbypachalik(get_aal):
-            aals = self.session.query(Aal).filter_by(pachalik_id=get_aal).all()
-            aalArray = []
-            for aal in aals:
-                aalObj = {}
-                aalObj['id'] = aal.id
-                aalObj['name'] = aal.name
-                aalArray.append(aalObj)
-                print(aalArray)
-            return jsonify({'aalpachalik' : aalArray})"""
-
         
         @app.route("/register", methods=['GET', 'POST'])
         def register():
@@ -245,13 +181,12 @@ class Covid19Monitor(object):
                     employe = dict(form.employe.choices).get(form.employe.data)
                     id_societe = form.id_societe.data
                     nom_societe = form.nom_societe.data
-                    observation = form.observation.data
-                    pachalik = dict(form.pachalik.choices).get(form.pachalik.data)
-                    aal = dict(form.pachalik.choices).get(form.pachalik.data)
-                    x = self.geolocator.geocode(adresse).point.latitude
-                    y = self.geolocator.geocode(adresse).point.longitude
+                    pachalik = form.pachalik.data
+                    aal = form.aal.data
+                    x = self.geolocator.geocode(adresse).point.longitude
+                    y = self.geolocator.geocode(adresse).point.latitude
                     cas = Case(nom=nom, prenom=prenom,cin=cin, type=Case.Type.NEW.value,
-                        age=age, date_de_declaration=date, sexe=sexe, adresse=adresse, residance=residance, employe=employe, id_societe=id_societe, nom_societe=nom_societe, observation=observation, pachalik=pachalik, aal=aal, x=x, y=y, date_guerison=None, date_hospitalisation=None, lieu_hospitalisation=None, date_deces=None)
+                            age=age, date_de_declaration=date, sexe=sexe, adresse=adresse, residance=residance, employe=employe, id_societe=id_societe, nom_societe=nom_societe, observation=None, pachalik=pachalik, aal=aal, x=x, y=y, date_guerison=None, date_hospitalisation=None, lieu_hospitalisation=None, date_deces=None)
                     self.session.add(cas)
                     self.session.commit()
                     self.session.close()
@@ -273,7 +208,8 @@ class Covid19Monitor(object):
                     date_hospitalisation = form.date_hospitalisation.data
                     date_deces = form.date_deces.data
                     lieu_hospitalisation = form.lieu_hospitalisation.data
-                    self.session.query(Case).filter(Case.cin == form.cin.data).update({Case.type: status, Case.date_guerison: date_guerison, Case.date_hospitalisation :date_hospitalisation, Case.date_deces:date_deces, Case.lieu_hospitalisation: lieu_hospitalisation }, synchronize_session=False)
+                    observation = form.observation.data
+                    self.session.query(Case).filter(Case.cin == form.cin.data).update({Case.type: status, Case.date_guerison: date_guerison, Case.date_hospitalisation :date_hospitalisation, Case.date_deces:date_deces, Case.lieu_hospitalisation: lieu_hospitalisation, Case.observation : observation }, synchronize_session=False)
                     self.session.commit()
                     redirect(url_for('home'))
                     flash(f"L'etat du malade " + cases[0].nom + " " + cases[0].prenom + " a ete modifie", "success")

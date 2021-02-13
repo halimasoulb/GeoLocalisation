@@ -22,7 +22,7 @@ class RegistrationForm(FlaskForm):
     
     date_de_naissance = DateTimeLocalField("Date de naissance", validators=[ DataRequired()],  format='%Y-%m-%dT%H:%M')
 
-    cin = StringField('CIN', validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "AB123456"})
+    cin = StringField('CIN', validators=[DataRequired()], render_kw={"placeholder": "AB123456"})
 
     date = DateTimeLocalField("Date Declaration", validators=[ DataRequired()], format='%Y-%m-%dT%H:%M' )
 
@@ -36,29 +36,26 @@ class RegistrationForm(FlaskForm):
 
     nom_societe = StringField('Nom Societe', validators=[validators.Optional()])
 
-    aal =  SelectField('AAL', choices=[('1', 'BOUSKOURA'),('2','NOUACEUR')])
+    aal =  SelectField('AAL', choices=[])
 
-    pachalik =  SelectField('PACHALIK', choices=[('1', 'Bouskoura'), ('2', 'Nouaceur')])
+    pachalik =  SelectField('PACHALIK', choices=[])
 
-    observation = TextAreaField("Observation", render_kw={"placeholder": "Est sortie de l'hopital le 12/05/2020 mais toujours positive covid-19"} )
-   
     submit = SubmitField('Enregistrer')
 
-    """def __init__(self, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(RegistrationForm, self).__init__(*args, **kwargs)
         with open('config.json') as json_file:
             data = json.loads(json_file.read())
-            for d in data: 
-                if d["parent_id"] == 0:
-                    self.pachalik.choices = [(i, i[1]) for i in d]"""
+            self.pachalik.choices = [(i, i["name"]) for i in data["pachalik"]]
+            self.aal.choices = [(i, i["name"]) for i in data["aal"]]
 
 
 
 class ChangeStatus(FlaskForm):
 
-    cin = StringField('CIN', validators=[DataRequired(), Regexp('^[A-Z]{1,2}[0-9]{6}$')], render_kw={"placeholder": "AB123456"})
+    cin = StringField('CIN', validators=[DataRequired()], render_kw={"placeholder": "AB123456"})
     
-    status = SelectField('Etat malade', choices=[], validators=[ DataRequired()])  
+    status = SelectField('Etat malade', choices=[], validators=[DataRequired()])  
 
     date_hospitalisation = DateTimeLocalField("Date Hospitalisation", format='%Y-%m-%dT%H:%M',  validators=[validators.Optional()])
 
@@ -67,6 +64,8 @@ class ChangeStatus(FlaskForm):
     lieu_hospitalisation = TextField('Lieu Hospitalisation', validators=[validators.Optional()], render_kw={"placeholder": "HOPITAL SEKKAT PREFECTURE D'ARRONDISSEMENT AIN CHOCK"})
 
     date_deces = DateTimeLocalField("Date deces", validators=[validators.Optional()], format='%Y-%m-%dT%H:%M')
+
+    observation = TextAreaField("Observation", render_kw={"placeholder": "Est sortie de l'hopital le 12/05/2020 mais toujours positive covid-19"} )
 
     submit = SubmitField('Modifier')
 
