@@ -6,8 +6,10 @@ $ git clone https://github.com/halimasoulb/covid19_registration.git
 ```
 ```bash
 $ cd covid19_registration
+```
 ```bash
 $ pip3 install requirements.txt
+```
 ## How to run :
 Run the application on gunicorn.
 >Just Execute :
